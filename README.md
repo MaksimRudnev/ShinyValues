@@ -1,6 +1,6 @@
 # Basic values in Europe
 
-A Shiny App that demontrates means of basic values measured with Schwartz (2001) scale in European Social Survey.
+A Shiny App that demontrates means of basic values measured with [Schwartz (2001)](http://journals.sagepub.com/doi/abs/10.1177/0022022101032005001) scale in [European Social Survey](https://europeansocialsurvey.org).
 
 To run, type in the RStudio console: `shiny::runGitHub("ShinyValues", "maksimrudnev")`
 
