@@ -1,7 +1,10 @@
 
 #load("data/tab.pspweight.R")
 #load("data/tab.pspweight_rus.R")
-load("data/tab.dweight.R")
+#load("data/tab.dweight.R")
+#load("data/tb.Rdata")
+
+library("markdown")
 
 fluidPage(tags$head(
   #@import url('//fonts.googleapis.com/css?family=Lobster|Cabin:400,700'); #move it to style when needed
@@ -13,6 +16,7 @@ fluidPage(tags$head(
                   font-weight: 900;
                   line-height: 1.1;
                   color: #525050;
+                  padding: 0 0 0 0;
                   }
 
                   a.action-button {
@@ -23,109 +27,138 @@ fluidPage(tags$head(
                 div.shiny-input-checkboxgroup {
                     margin-top: 0px;
                     padding-top: 0px;
-}
+                }
+              
+                div.lang {
+font-size: 9pt;
+float: right;
+padding: 0px 0;
+height: 40px;
+width: 100px;
+                }
                   
-                  "))
+    "))
   ),
-  headerPanel('Trends in basic values in European countries'),
-sidebarLayout(
- 
-  sidebarPanel(
-    conditionalPanel(  #TAB 1
-      'input.dataset === "by country"',
-      selectInput('show_countries', 'Choose country to show:',
-                  levels(tab$cntry), selected = levels(tab$cntry)[1]),
-      actionLink("tenValues", "Basic values:"), 
-    checkboxGroupInput('show_vals_a', NA,
-                       levels(tab$variable)[1:10], selected = NULL),
-    
-    actionLink("fourValues", "Higher-order values:"), 
-    checkboxGroupInput('show_vals_b', NA,
-                       levels(tab$variable)[11:14], selected = NULL),
-    
-    actionLink("twoValues", 'Higher-order value dimensions:'),
-    checkboxGroupInput('show_vals_c', NA,
-                       levels(tab$variable)[15:16], selected = levels(tab$variable)[c(15,16)])
-    
-    
-    #numericInput('clusters', 'Cluster count', 3,
-    #             min = 1, max = 9)
-  ),
+  #headerPanel('Trends in basic values in European countries'),
   
+  uiOutput("language.selector", class="lang"),
+  headerPanel(textOutput("lang.general.title", inline=T)),
+  
+   sidebarLayout(
+  
+     #Sidebar ####
+   sidebarPanel(
+
+    #...Conditional tab 1 by country #####
+    conditionalPanel(
+      'input.dataset === "by country"',
+      uiOutput("country.selector.tab.1"),
+      
+    actionLink("tenValues.link", label=textOutput("lang.val10.header")),
+    uiOutput("ten.values.selector.tab.1"),
+
+    actionLink("fourValues.link",  label=textOutput("lang.val4.header")),
+    uiOutput("four.values.selector.tab.1"),
+    
+    # checkboxGroupInput('show_vals_b', NA,
+    #                    choiceValues=c("Openness",     "Conserv",      "Self_Trans",   "Self_Enhance"),
+    #                    choiceNames=list(textOutput("lang.Openness", inline=T),
+    #                                     textOutput("lang.Conserv", inline=T),
+    #                                     textOutput("lang.Self_Trans", inline=T),
+    #                                     textOutput("lang.Self_Enhance", inline=T)
+    #                                     ),
+    #                   # levels(tab$variable)[11:14],
+    #                    selected = NULL),
+
+    actionLink("twoValues.link",  label=textOutput("lang.val2.header")),
+    uiOutput("two.values.selector.tab.1")
+    
+    # checkboxGroupInput('show_vals_c', NA,
+    #                    choiceValues=c("Conservation_Openness", "Self_Enhancement_Self_Transcendence"),
+    #                    choiceNames=list(textOutput("lang.Conservation_Openness", inline=T),
+    #                                     textOutput("lang.Self_Enhancement_Self_Transcendence", inline=T)),
+    #                    #levels(tab$variable)[15:16],
+    #                    selected = c("Conservation_Openness", "Self_Enhancement_Self_Transcendence")
+    # )
+  ), #conditionalPanel
+
+  #...Conditional tab 2 by country #####
   conditionalPanel(  # TAB 2
     'input.dataset === "by value"',
-      #helpText('Click the column header to sort a column.'),
-    
-    selectInput('show_vals2', 'Choose value:',
-                       levels(tab$variable), selected = levels(tab$variable)[1]),
-    
+
+uiOutput("value.selector.tab.2"),
+
     #selectInput('show_countries2', 'Choose countries to show:',multiple=T,
     #                        levels(tab$cntry), selected = levels(tab$cntry)[c(1,5,10)])
-    
-    tags$html(strong('Choose countries to show:'), br()),
-    
-    actionLink("showNorth", "North"),"|",
-    actionLink("showEast", "East"),"|",
-    actionLink("showWest", "West"),"|",
-    actionLink("showSouth", "South"),"|",
-    
+
+    #tags$html(strong('Choose countries to show:'), br()),
+    tags$html(strong(textOutput("lang.multiple.countries.selector", inline=T)), br()),
+
+    actionLink("showNorth", textOutput("lang.north", inline=T) #"North"
+               ),"|",
+    actionLink("showEast", textOutput("lang.east", inline=T)  #"East"
+               ),"|",
+    actionLink("showWest", textOutput("lang.west", inline=T) # "West"
+               ),"|",
+    actionLink("showSouth", textOutput("lang.south", inline=T) #"South"
+               ),"|",
+
     actionLink("reset", "", icon = icon("remove-circle", lib = "glyphicon")),
-    checkboxGroupInput('show_countries2', NA,
-                levels(tab$cntry), selected = levels(tab$cntry)[c(2,19,22,31)])
-    
-    
+    uiOutput("countries.selector.tab.2")
+
+
   ),
-  
+
+  #...Conditional tab 3 value map #####
   conditionalPanel(
-    'input.dataset === "value map"',  
-  sliderInput("round", "Year of survey", min(tab$essround),max(tab$essround), value=2006,
+    'input.dataset === "value map"',
+  sliderInput("round", textOutput("lang.year.slider", inline=T), #"Year of survey",
+
+              #min(tab$essround),max(tab$essround), 
+              2002,2016,
+              value=2006,
               step=2, round=TRUE, animate=T, sep=""),
-  helpText("Put cursor over the points to see confidence intervals and click to see the change.")
-  
-  
-  )),
+  #helpText("Put cursor over the points to see confidence intervals and click to see the change.")
+  helpText(textOutput("lang.hint.year.slider", inline=T))
+  ),
 
+#...Conditional tab 4 geo map Europe #####
+conditionalPanel(
+  'input.dataset === "geo map"',
+  sliderInput("round.tab4", textOutput("lang.year.slider2", inline=T), 2002, 2016, value=2006, step=2, round=T, animate=T, sep="" ),
+  uiOutput("values.selector.tab4")
+  
+)
 
+ ),
+
+# Main panel #####
   mainPanel(
     tabsetPanel(
       id = 'dataset',
-      tabPanel('by country', 
-                       
-    plotOutput('plot1'),
-    tags$html(br(),em("Created by", a(href="http://www.maksimrudnev.com", "Maksim Rudnev"), 
-                 "with ShinyApps, using data from", a(href="http://www.europeansocialsurvey.org/data/", "European Social Survey."),
-                 "Value indices are based on,", a("Schwartz theory of basic values.", href="https://pdfs.semanticscholar.org/dc49/e27d0ed890cd3ed2e80ca0b0107207f12a64.pdf"), "They were computed following ", a(href="http://essedunet.nsd.uib.no/cms/topics/1/", "ESS EduNet"),
-                 "instructions, and weighted with design weight" #, a("pspweight.", href="http://www.europeansocialsurvey.org/methodology/ess_methodology/data_processing_archiving/weighting.html")
-    )
-    )
-    #, tableOutput("tabl")
-    ),
-    
-    tabPanel('by value',
-             plotOutput('plot2'),
-             tags$html(br(),em("Created by", a(href="http://www.maksimrudnev.com", "Maksim Rudnev"), 
-                          "with ShinyApps, using data from", a(href="http://www.europeansocialsurvey.org/data/", "European Social Survey."),
-                          "Value indices are based on", a("Schwartz theory of basic values.", href="https://pdfs.semanticscholar.org/dc49/e27d0ed890cd3ed2e80ca0b0107207f12a64.pdf"), "They were computed following ", a(href="http://essedunet.nsd.uib.no/cms/topics/1/", "ESS EduNet"),
-                          "instructions, and weighted with  design weight" #", a("pspweight.", href="http://www.europeansocialsurvey.org/methodology/ess_methodology/data_processing_archiving/weighting.html")
-                          )
-             )),
-    tabPanel('value map',
-             plotOutput('plot3', height = "600px", click = clickOpts(id = "plot_click"),
-                        hover=hoverOpts(id="plot_hover", delay =1, nullOutside=TRUE))
-                        ,
-             tags$html(br(),em("Created by", a(href="http://www.maksimrudnev.com", "Maksim Rudnev"), 
-                          "with ShinyApps, using data from", a(href="http://www.europeansocialsurvey.org/data/", "European Social Survey."),
-                          "Value indices are based on", a("Schwartz theory of basic values.", href="https://pdfs.semanticscholar.org/dc49/e27d0ed890cd3ed2e80ca0b0107207f12a64.pdf"), "They were computed following ", 
-                          a(href="http://essedunet.nsd.uib.no/cms/topics/1/", "ESS EduNet"),
-                          "instructions, and weighted with  design weight" #", 
-                          #a("pspweight.", href="http://www.europeansocialsurvey.org/methodology/ess_methodology/data_processing_archiving/weighting.html")
-                          )
-             )
-                        )
-             
-    
-    
-    
-    )
+
+      tabPanel(value='by country', title=textOutput('lang.tab1.name', inline=T),
+        plotOutput('plot1')
+        ),
+
+      tabPanel(value='by value', title=textOutput('lang.tab2.name', inline=T),
+         plotOutput('plot2')
+         ),
+
+      tabPanel(value='value map', title=textOutput('lang.tab3.name', inline=T),
+         plotOutput('plot3', height = "600px", click = clickOpts(id = "plot_click"),
+                        hover=hoverOpts(id="plot_hover", delay =1, nullOutside=TRUE)
+                    )
+         ),
+      tabPanel(value='geo map', title=textOutput('lang.geomap.tab', inline=T),
+          plotOutput('plot4')     
+               ),
+      
+      
+      tabPanel(value="credits", title="？",
+               includeMarkdown("CREDITS.md"))
+      )
   )
-))
+) #sidebarLayout
+
+) #fluidPage
