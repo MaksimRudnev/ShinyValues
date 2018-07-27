@@ -7,8 +7,10 @@
 load("data/tb.Rdata")
 load("data/europe.Rdata")
 
-translation.tab <- read.delim("data/translation_elements.txt", fileEncoding = "UTF-16", colClasses = "character")
-translation.countries <- read.delim("data/translation_cntry.txt", fileEncoding = "UTF-16", colClasses = "character")
+translation.tab <- read.delim("data/translation_elements.txt", fileEncoding = "UTF-16", colClasses = "character", header = TRUE, 
+                              sep = "\t", quote = "\"")
+translation.countries <- read.delim("data/translation_cntry.txt", fileEncoding = "UTF-16", colClasses = "character", header = TRUE, 
+                                    sep = "\t", quote = "\"")
 values <- list(
   ten.abbr =  c("SE", "CO", "TR", "BE", "UN", "SD", "ST", "HE", "AC", "PO"),
   four.abbr = c("Openness", "Conserv", "Self_Trans", "Self_Enhance"),
