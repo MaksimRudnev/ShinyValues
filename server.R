@@ -15,11 +15,11 @@ values <- list(
   two.abbr = c("Conservation_Openness", "Self_Enhancement_Self_Transcendence"))
 
 
-library("ggplot2")
-library("reshape2")
-library("ggrepel")
-library("stringr")
-library("sf")
+require("ggplot2")
+require("reshape2")
+require("ggrepel")
+require("stringr")
+require("sf")
 
 shinyServer(
 function(input, output, session) {
