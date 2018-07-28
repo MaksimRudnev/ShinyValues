@@ -683,13 +683,14 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
   output$plot4 <- renderPlot({
    
   ggplot(selectedData4()) + 
-    geom_sf(aes(fill=value), color="gray30")+
+    geom_sf(aes(fill=value), color="gray60")+
     scale_fill_gradient(  low="white", high=selectedData1()$all_clr_line[input$values.selector4] )+
       #geom_text(aes(label=ID))+
     theme_void()+labs(fill=  str_wrap( translation.tab[translation.tab==input$values.selector4, lang$lang], 20),
                       caption=translation.tab[translation.tab$element=="copyright.caption", lang$lang])+
     theme(panel.grid = element_line(colour = "transparent"),
-          legend.title = element_text(size = 12))
+          legend.title = element_text(size = 12),
+          plot.background = element_rect(fill="transparent"))
   })
   
 }) # close shinyServer

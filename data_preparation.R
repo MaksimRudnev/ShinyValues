@@ -113,36 +113,28 @@ library(sf)
 d <- map('world', fill = TRUE, col = 1:10, plot=F)
 mapBase <- st_as_sf(d)
 #mapBase <- st_make_valid(mapBase) #takes a long time
-europe <- st_crop(mapBase, xmin = -15, xmax = 35, ymin = 35, ymax = 60)
+europe <- st_crop(mapBase, xmin = -20, xmax = 35, ymin = 36, ymax = 65)
 europe$ID[europe$ID=="UK"]<-"United Kingdom"
 save(europe, file="data/europe.Rdata")
 
 
 translation.countries <- read.delim("data/translation_cntry.txt", fileEncoding = "UTF-16", colClasses = "character")
 
-cropMap$cntry <- sapply(cropMap$ID, function(x) if(any(translation.countries$English==x)) translation.countries[translation.countries$English==x, "cntry"]  else NA,  USE.NAMES =F  )
+europe$cntry <- sapply(europe$ID, function(x) if(any(translation.countries$English==x)) translation.countries[translation.countries$English==x, "cntry"]  else NA,  USE.NAMES =F  )
 
-dt<-merge(cropMap, tab[tab$essround==2006 & tab$variable=="Self_Trans",c("cntry","value")], by="cntry", all.x=T)
+europe$cntry
+
+dt<-merge(europe, tab[tab$essround==2006 & tab$variable=="Self_Trans",c("cntry","value")], by="cntry", all.x=T)
 
 # Europe
 ggplot(dt) + 
   geom_sf(aes(fill=value, label=ID), color="gray30")+
-  theme_void()+labs(fill="that value")+
-  theme(panel.grid = element_line(colour = "transparent"),
+  theme_minimal()+labs(fill="that value")+
+  theme(panel.grid = element_line(colour = "grey20"),
         legend.title = element_text(size = 12))
 
 
 
-spainMap <- ggplot(cropMap,
-                   aes(fill = factor(ifelse(cropMap$ID == "Spain", 1, 2)))) +
-  geom_sf() +
-  labs(x = "Longitude", y = "Latitude", fill = "") +
-  scale_fill_manual(values = c("darkgrey", "lightgrey"),
-                    labels = c("Spain", "Not Spain")) +
-  theme_bw()
-  
-
-spainMap
 
 
 #### Additional, legacy and stuff
