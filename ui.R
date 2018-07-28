@@ -6,7 +6,8 @@
 
 library("markdown")
 
-fluidPage(tags$head(
+fluidPage(title="Basic values in Europe",
+  tags$head(
   #@import url('//fonts.googleapis.com/css?family=Lobster|Cabin:400,700'); #move it to style when needed
   tags$style(HTML("
                   
