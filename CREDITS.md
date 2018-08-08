@@ -28,7 +28,7 @@ If you are willing to participate in translating the app into your language, ple
 
 ## Packages used
 
-The following R packages were used in this app:
+The following R packages were used and required to run app:
 
 - shiny
 - ggplot2
@@ -37,5 +37,5 @@ The following R packages were used in this app:
 - stringr
 - maps
 - sf
-- LittleHelpers
+- readr
 

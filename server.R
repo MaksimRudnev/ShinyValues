@@ -7,21 +7,44 @@
 load("data/tb.Rdata")
 load("data/europe.Rdata")
 
-translation.tab <- read.delim("data/translation_elements.txt", fileEncoding = "UTF-16", colClasses = "character", header = TRUE, 
-                              sep = "\t", quote = "\"")
-translation.countries <- read.delim("data/translation_cntry.txt", fileEncoding = "UTF-16", colClasses = "character", header = TRUE, 
-                                    sep = "\t", quote = "\"")
+require("ggplot2")
+require("reshape2")
+require("ggrepel")
+require("stringr")
+require("sf")
+require("readr")
+
+# translation.tab <- read.delim("data/translation_elements.txt", 
+#                               fileEncoding = "UTF-8", 
+#                               colClasses = "character", header = TRUE, 
+#                               sep = "\t", quote = "\"")
+
+
+translation.tab <- as.data.frame(read_delim(file="data/translation_elements.txt", 
+                              col_types="cccc",
+                              col_names=T, delim="\t", quote="", locale=locale(encoding="UTF-8")
+                              ))
+
+
+# translation.countries <- read.delim("data/translation_cntry.txt",
+#                                     fileEncoding = "UTF-16",
+#                                     colClasses = "character", header = TRUE,
+#                                     sep = "\t", quote = "\"")
+
+translation.countries <- as.data.frame(read_delim(file="data/translation_cntry.txt",
+                              col_types="cccc",
+                              col_names=T, delim="\t", quote="", locale=locale(encoding="UTF-8")
+                              ))
+
+
+
 values <- list(
   ten.abbr =  c("SE", "CO", "TR", "BE", "UN", "SD", "ST", "HE", "AC", "PO"),
   four.abbr = c("Openness", "Conserv", "Self_Trans", "Self_Enhance"),
   two.abbr = c("Conservation_Openness", "Self_Enhancement_Self_Transcendence"))
 
 
-require("ggplot2")
-require("reshape2")
-require("ggrepel")
-require("stringr")
-require("sf")
+
 
 shinyServer(
 function(input, output, session) {
@@ -50,12 +73,12 @@ function(input, output, session) {
      lang$lang = input$lang
    })
    
-   # produce an output to use in UI elements
-   lapply(translation.tab$element, function(x) {
-     el.name <- paste("lang.", x, sep="")
-     output[[el.name]] <- renderText( translation.tab[translation.tab$element==x,lang$lang]
-                                      )
-   })
+   # # produce an output to use in UI elements
+   # lapply(translation.tab$element, function(x) {
+   #   el.name <- paste("lang.", x, sep="")
+   #   output[[el.name]] <- renderText( translation.tab[translation.tab$element==x,lang$lang]
+   #                                    )
+   # })
    
    # produce an output to use for countries in UI
    # lapply(translation.countries$cntry, function(x) {
@@ -64,6 +87,89 @@ function(input, output, session) {
    #   )
    # })
    
+   # produce UI  elements in target language
+     ## Tab1 
+   output$lang.general.title <- renderUI(
+     tags$span(translation.tab[translation.tab$element=="general.title",lang$lang])
+   )
+   
+   output$lang.val10.header <- renderUI(
+     actionLink("tenValues.link", label=translation.tab[translation.tab$element=="val10.header", lang$lang])
+   )
+   
+   output$lang.val4.header <- renderUI(
+     actionLink("fourValues.link",  label=translation.tab[translation.tab$element=="val4.header", lang$lang])
+   )
+   
+   output$lang.val2.header <- renderUI(
+     actionLink("twoValues.link",  label=translation.tab[translation.tab$element=="val2.header", lang$lang])
+   )
+     
+   ## Tab names
+   output$lang.tab1.name <- renderUI(
+     tags$span(translation.tab[translation.tab$element=="tab1.name",lang$lang])
+   )
+   
+   output$lang.tab2.name <- renderUI(
+     tags$span(translation.tab[translation.tab$element=="tab2.name",lang$lang])
+   )
+   
+   output$lang.tab3.name <- renderUI(
+     tags$span(translation.tab[translation.tab$element=="tab3.name",lang$lang])
+   )
+   
+   output$lang.geomap.tab <- renderUI(
+     tags$span(translation.tab[translation.tab$element=="geomap.tab",lang$lang])
+   )
+   
+   
+   # Tab 2
+   output$lang.multiple.countries.selector <- renderUI( 
+      tags$html(strong(span(translation.tab[translation.tab$element=="multiple.countries.selector",lang$lang])))
+   )
+   
+   output$lang.showNorth <- renderUI( 
+   actionLink("showNorth", translation.tab[translation.tab$element=="north",lang$lang] #"North"
+   ))
+   
+   output$lang.showEast <- renderUI( 
+   actionLink("showEast", translation.tab[translation.tab$element=="east",lang$lang]  #"East"
+   ))
+   
+   output$lang.showWest <- renderUI( 
+   actionLink("showWest", translation.tab[translation.tab$element=="west",lang$lang] # "West"
+   ))
+   
+   output$lang.showSouth <- renderUI( 
+   actionLink("showSouth", translation.tab[translation.tab$element=="south",lang$lang] #"South"
+   ))
+   
+   # Tab 3
+   output$tab3.slider <- renderUI( 
+     
+   sliderInput(inputId="round", 
+               label=translation.tab[translation.tab$element=="year.slider",lang$lang], #"Year of survey",
+               
+               
+               min=min(tab$essround), # 2002
+               max=max(tab$essround), # 2016
+               value=2006,
+               step=2, round=TRUE, animate=T, sep="")
+   )
+   
+   output$help.tab3.slider <- renderUI( 
+   helpText(translation.tab[translation.tab$element=="hint.year.slider",lang$lang])
+   )
+   
+   output$tab4.slider <- renderUI(
+     sliderInput("round.tab4", translation.tab[translation.tab$element=="year.slider2",lang$lang],
+                 min=min(tab$essround), # 2002
+                 max=max(tab$essround), # 2016
+                 value=2006,
+                 step=2, round=TRUE, animate=T, sep="")
+   )
+   
+   # Tab 1 functionality
    
    list.of.countries <- reactive({
      a <- translation.countries[translation.countries$cntry %in% unique(tab$cntry),]
