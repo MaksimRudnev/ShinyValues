@@ -31,14 +31,21 @@ fluidPage(title="Basic values in Europe",
                 }
               
                 div.lang {
-font-size: 9pt;
-float: right;
-padding: 0px 0;
-height: 40px;
-width: 100px;
+                  font-size: 9pt;
+                  float: right;
+                  padding: 0px 0;
+                  height: 40px;
+                  width: 100px;
+                }
+                
+                #downloadButton {
+                float: right;
+                font-size: 10px;
                 }
                   
-    "))
+    ")),
+  includeScript("google_analytics.js"),
+  includeScript("google_analytics_prop.js")
   ),
   #headerPanel('Trends in basic values in European countries'),
   
@@ -157,7 +164,8 @@ conditionalPanel(
       id = 'dataset',
 
       tabPanel(value='by country', title=uiOutput("lang.tab1.name"),
-        plotOutput('plot1')
+        plotOutput('plot1'),
+        downloadButton("downloadButton", "Get plot data")
         ),
 
       tabPanel(value='by value', title=uiOutput("lang.tab2.name"),
@@ -169,9 +177,9 @@ conditionalPanel(
                         hover=hoverOpts(id="plot_hover", delay =1, nullOutside=TRUE)
                     )
          ),
-      tabPanel(value='geo map', title=uiOutput("lang.geomap.tab"),
-          plotOutput('plot4')     
-               ),
+      # tabPanel(value='geo map', title=uiOutput("lang.geomap.tab"),
+      #     plotOutput('plot4')     
+      #          ),
       
       
       tabPanel(value="credits", title="？",

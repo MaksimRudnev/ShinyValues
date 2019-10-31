@@ -4,14 +4,16 @@
 #load("data/tab.dweight.R")
 #load("data/tab.pspweight_rus.R")
 
-load("data/tb.Rdata")
-load("data/europe.Rdata")
+load("data/tb2.Rdata")
+#load("data/europe.Rdata")
+#tab<-tab[tab$variable!="stflife" & tab$variable!="happy",]
+tab$variable<-droplevels(tab$variable)
 
 require("ggplot2")
 require("reshape2")
 require("ggrepel")
 require("stringr")
-require("sf")
+#require("sf")
 require("readr")
 
 # translation.tab <- read.delim("data/translation_elements.txt", 
@@ -152,8 +154,8 @@ function(input, output, session) {
                
                
                min=min(tab$essround), # 2002
-               max=max(tab$essround), # 2016
-               value=2006,
+               max=max(tab$essround), # 2018
+               value=2018,
                step=2, round=TRUE, animate=T, sep="")
    )
    
@@ -306,7 +308,7 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
     
     observeEvent(input$showEast, {
       selector.tab.2$countries <- list.of.countries()[list.of.countries() %in% 
-                  c("RU", "HR", "LV", "RO", "LT",  "XK", "PL", "SI", "EE", "SK", "UA", "BG", "HU", "CZ")]
+                  c("RU", "HR", "LV", "RO", "LT",  "XK", "PL", "SI", "EE", "SK", "UA", "BG", "HU", "CZ", "RS")]
     })
     
     observeEvent(input$showNorth, {
@@ -512,26 +514,33 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
   })
   
   # Preparing data for TAB 4 #####
-  
-  selectedData4 <- reactive({
-    
-    europe$cntry <- sapply(europe$ID, 
-                            function(x) {
-                              if(any(translation.countries$English==x)) {
-                                  translation.countries[translation.countries$English==x, "cntry"]
-                                  } else {
-                                    NA
-                                  }
-                              },  USE.NAMES =F  
-                            )
-    
-    dt<-merge(europe, tab[tab$essround==input$round.tab4 & tab$variable==input$values.selector4,
-                           c("cntry","value")], by="cntry", all.x=T)
-
-    dt
-  })
+  # 
+  # selectedData4 <- reactive({
+  #   
+  #   europe$cntry <- sapply(europe$ID, 
+  #                           function(x) {
+  #                             if(any(translation.countries$English==x)) {
+  #                                 translation.countries[translation.countries$English==x, "cntry"]
+  #                                 } else {
+  #                                   NA
+  #                                 }
+  #                             },  USE.NAMES =F  
+  #                           )
+  #   
+  #   dt<-merge(europe, tab[tab$essround==input$round.tab4 & tab$variable==input$values.selector4,
+  #                          c("cntry","value")], by="cntry", all.x=T)
+  # 
+  #   dt
+  # })
   
  
+  output$downloadButton <-  downloadHandler(
+      filename = "data.csv",
+      content = function(file) {
+        write.csv(selectedData1()$ta, file, row.names = FALSE)
+      }
+    )
+  
   
 
   # Plot 1 ####

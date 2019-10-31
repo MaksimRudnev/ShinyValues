@@ -4,7 +4,7 @@ BE	Belgium	Бельгия	Bélgica
 BG	Bulgaria	Болгария	Bulgária
 CH	Switzerland	Швейцария	Suíça
 CY	Cyprus	Кипр	Chipre
-CZ	Czech Republic	Чехия	República Checa
+CZ	Czechia	Чехия	República Checa
 DE	Germany	Германия	Alemanha
 DK	Denmark	Дания	Dinamarca
 EE	Estonia	Эстония	Estônia
@@ -22,6 +22,7 @@ NL	Netherlands	Нидерланды	Países Baixos
 NO	Norway	Норвегия	Noruega
 PL	Poland	Польша	Polônia
 PT	Portugal	Португалия	Portugal
+RS	Serbia	Сербия	Sérvia
 RU	Russia	Россия	Rússia
 SE	Sweden	Швеция	Suécia
 SI	Slovenia	Словения	Eslovênia
