@@ -16,22 +16,10 @@ require("stringr")
 #require("sf")
 require("readr")
 
-# translation.tab <- read.delim("data/translation_elements.txt", 
-#                               fileEncoding = "UTF-8", 
-#                               colClasses = "character", header = TRUE, 
-#                               sep = "\t", quote = "\"")
-
-
 translation.tab <- as.data.frame(read_delim(file="data/translation_elements.txt", 
                               col_types="cccc",
                               col_names=T, delim="\t", quote="", locale=locale(encoding="UTF-8")
                               ))
-
-
-# translation.countries <- read.delim("data/translation_cntry.txt",
-#                                     fileEncoding = "UTF-16",
-#                                     colClasses = "character", header = TRUE,
-#                                     sep = "\t", quote = "\"")
 
 translation.countries <- as.data.frame(read_delim(file="data/translation_cntry.txt",
                               col_types="cccc",

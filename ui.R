@@ -43,9 +43,9 @@ fluidPage(title="Basic values in Europe",
                 font-size: 10px;
                 }
                   
-    ")),
-  includeScript("google_analytics.js"),
-  includeScript("google_analytics_prop.js")
+    "))#,
+ # includeScript("google_analytics.js"),
+ # includeScript("google_analytics_prop.js")
   ),
   #headerPanel('Trends in basic values in European countries'),
   
