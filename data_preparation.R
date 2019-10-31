@@ -41,7 +41,7 @@ all.rounds$russia7$freehms[all.rounds$russia7$freehms %in% c(8, 9)]<-NA
 for(v in values$items) all.rounds$russia7[,v][all.rounds$russia7[,v] %in% c(8, 9)]<-NA
 # 
 items.to.select <- c("cntry", "essround", values$items, "dweight", #"pspwght",
-                     "yrbrn", "happy", "stflife", "freehms")
+                    )
 
 ess1_9 <- Reduce("rbind", list(
   all.rounds$ess1[,items.to.select],
@@ -76,7 +76,7 @@ library("survey")
 s.w <- svydesign(ids = ~1, data = ess1_9, weights = ess1_9[,"dweight"])
 
 tab<-svyby(formula= ~ Conservation_Openness + Self_Enhancement_Self_Transcendence + Openness + Conserv + Self_Trans + Self_Enhance + 
-             SE + CO + TR + BE + UN + SD + ST + HE + AC + PO + stflife + happy, 
+             SE + CO + TR + BE + UN + SD + ST + HE + AC + PO, 
            by= ~ cntry + essround,
            design = s.w, 
            FUN = svymean,
@@ -89,17 +89,15 @@ tab<-svyby(formula= ~ Conservation_Openness + Self_Enhancement_Self_Transcendenc
 
 library("reshape") 
 tb<-cbind(    
-  melt(tab[,c("cntry", "essround", values$two.abbr, values$four.abbr, values$ten.abbr,  "happy", "stflife"#, "cohort"
-  )],
-  id.vars=c("cntry", "essround"#, "cohort"
-  )), 
-  se=melt(tab[,c("cntry", "essround",  #"cohort",
+  melt(tab[,c("cntry", "essround", values$two.abbr, values$four.abbr, values$ten.abbr)],
+  id.vars=c("cntry", "essround")), 
+  se=melt(tab[,c("cntry", "essround",
                  paste0("se.", values$two.abbr), 
                  paste0("se.", values$four.abbr),
                  paste0("se.", values$ten.abbr),
-                 "se.happy", "se.stflife")
+                 )
               ],
-          id.vars=c("cntry", "essround"#, "cohort"
+          id.vars=c("cntry", "essround"
           ))$value)
 
 tb$upper<-tb$value+tb$se*1.96
@@ -107,14 +105,9 @@ tb$lower<-tb$value-tb$se*1.96
 
 
 tb$essround<-2000+tb$essround*2
-
-#tb<-tb[!tb$cntry %in% c("LU", "AL"),]
 tb$cntry<-as.character(tb$cntry)
+tb$variable<- factor(tb$variable, levels=c(values$ten.abbr, values$four.abbr, values$two.abbr))
 
-
-
-
-tb$variable<- factor(tb$variable, levels=c(values$ten.abbr, values$four.abbr, values$two.abbr #, "happy", "stflife"
-))
+# Save data 
 
 save(tab, file="data/tb2.Rdata")
