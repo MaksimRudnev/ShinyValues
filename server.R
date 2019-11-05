@@ -198,7 +198,7 @@ function(input, output, session) {
   
   # Selectors of values on tab 1 ####
    output$ten.values.selector.tab.1 <- renderUI({
-     checkboxGroupInput('show_vals_a', NA,
+     checkboxGroupInput('show_vals_a', NULL,
                         choiceValues= values$ten.abbr,
                         choiceNames = unname(sapply(values$ten.abbr, function(x) translation.tab[translation.tab$element==x,lang$lang])),
                         selected = store.tab1$ten.values
@@ -206,7 +206,7 @@ function(input, output, session) {
    })
    
    output$four.values.selector.tab.1 <- renderUI({
-     checkboxGroupInput('show_vals_b', NA,
+     checkboxGroupInput('show_vals_b', NULL,
                         choiceValues= values$four.abbr,
                         choiceNames = unname(sapply(values$four.abbr, function(x) translation.tab[translation.tab$element==x,lang$lang])),
                         selected = store.tab1$four.values
@@ -214,7 +214,7 @@ function(input, output, session) {
    })
    
    output$two.values.selector.tab.1 <- renderUI({
-     checkboxGroupInput('show_vals_c', NA,
+     checkboxGroupInput('show_vals_c', NULL,
                         choiceValues= values$two.abbr,
                         choiceNames = unname(sapply(values$two.abbr, function(x) translation.tab[translation.tab$element==x,lang$lang])),
                         selected = store.tab1$two.values
@@ -280,7 +280,7 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
                                  values="SE")
     
     output$countries.selector.tab.2 <- renderUI({
-      checkboxGroupInput('show_countries2', NA,
+      checkboxGroupInput('show_countries2', NULL,
                          choices = list.of.countries(),
                          #choiceNames = 
                          #choiceValues = 

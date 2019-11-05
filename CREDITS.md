@@ -17,7 +17,7 @@ pspweight is assigned 1 to all the respondents.
 
 ## Run
 
-The app is published here: http://apps.maksimrudnev.com:3838/shiny_values/
+The app is published here: http://values.maksimrudnev.com
 
 (Slow) mirror is here: https://rudnev.shinyapps.io/Basic_Values/
 

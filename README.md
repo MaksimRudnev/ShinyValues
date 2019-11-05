@@ -15,7 +15,7 @@ Data on Russia in round 7 are taken from ESS website and Russia round 9 from CES
 
 ## Run
 
-The app is published here: http://apps.maksimrudnev.com:3838/shiny_values/
+The app is published here: http://values.maksimrudnev.com
 
 (Slow) mirror is here: https://rudnev.shinyapps.io/Basic_Values/
 
