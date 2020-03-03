@@ -5,6 +5,7 @@
 #load("data/tab.pspweight_rus.R")
 
 load("data/tb2.Rdata")
+#load("data/tb1.Rdata")
 #load("data/europe.Rdata")
 #tab<-tab[tab$variable!="stflife" & tab$variable!="happy",]
 tab$variable<-droplevels(tab$variable)
@@ -25,8 +26,6 @@ translation.countries <- as.data.frame(read_delim(file="data/translation_cntry.t
                               col_types="cccc",
                               col_names=T, delim="\t", quote="", locale=locale(encoding="UTF-8")
                               ))
-
-
 
 values <- list(
   ten.abbr =  c("SE", "CO", "TR", "BE", "UN", "SD", "ST", "HE", "AC", "PO"),

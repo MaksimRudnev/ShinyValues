@@ -9,7 +9,10 @@ Value indices are based on [Schwartz theory of basic values](https://pdfs.semant
 post-stratification weight [pspweight](http://www.europeansocialsurvey.org/methodology/ess_methodology/data_processing_archiving/weighting.html).
 -->
 
-Data on Russia in round 7 are taken from ESS website and Russia round 9 from CESSI website. 
+
+Data on Russia in round 7 are taken from ESS website section "Related studies". 
+<!-- and Russia round 9 from CESSI website. -->
+
 
 <!-- 
 pspweight is assigned 1 to all the respondents. 
