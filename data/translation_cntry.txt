@@ -18,6 +18,7 @@ IL	Israel	Израиль	Israel
 IS	Iceland	Исландия	Islândia
 IT	Italy	Италия	Itália
 LT	Lithuania	Литва	Lituânia
+ME	Montenegro	Черногория	Montenegro
 NL	Netherlands	Нидерланды	Países Baixos
 NO	Norway	Норвегия	Noruega
 PL	Poland	Польша	Polônia

@@ -35,7 +35,7 @@ hint.year.slider	Put cursor over the points to see confidence intervals. Click o
 lang.selector	Choose language:	Выберите язык:	Escolha um idioma
 credits	Developed by Maksim Rudnev	Разработал Максим Руднев	Desenvolvido por Maksím Rudnev
 choose.some.values	Choose some values	Выберите какие-нибудь ценности	Escolhe o valor
-copyright.caption	© Maksim Rudnev, 2017-2019. Вased on European Social Survey data.	© Максим Руднев, 2017-2019. Данные Европейского социального исследования.	© Maksím Rudnev, 2017-2019. Dados de European Social Survey.
+copyright.caption	© Maksim Rudnev, 2017-2020. Вased on European Social Survey data.	© Максим Руднев, 2017-2020. Данные Европейского социального исследования.	© Maksím Rudnev, 2017-2020. Dados de European Social Survey.
 x.round	Year of survey	Год опроса	Ano de inquérito
 y.value	value importance	Значимость ценности	Valor
 choose.year.tab4	Choose year	Выберие год	Escolhe o ano
