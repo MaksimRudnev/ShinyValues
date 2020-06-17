@@ -45,7 +45,7 @@ russia9 <- read_sav("/Users/maksimrudnev/OneDrive/DATA/European Social Survey/Da
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Temporary adjustments for local Russia files 
-
+russia7 <- russia7[russia7$cntry=="RU",]
 russia7$essround <- rep(7, nrow(russia7))
 russia7$pspwght  <- rep(1, nrow(russia7))
 russia7$pweight  <- rep(0, nrow(russia7))
@@ -81,19 +81,26 @@ all.rounds <- list(ess1=ess1,
 items.to.select <- c("cntry", "essround", values$items, "dweight", "pspwght", "pweight", "idno"
                     )
 
-ess1_9 <- Reduce("rbind", lapply(all.rounds, function(x) drop_labs(untibble(x[,items.to.select]))))
-#   all.rounds$ess1[,items.to.select],
-#   all.rounds$ess2[,items.to.select],
-#   all.rounds$ess3[,items.to.select],
-#   all.rounds$ess4[,items.to.select],
-#   all.rounds$ess5[,items.to.select],
-#   all.rounds$ess6[,items.to.select],
-#   all.rounds$ess7[,items.to.select],
-#   all.rounds$ess8[,items.to.select],
-#   all.rounds$russia7[,items.to.select],
-#   all.rounds$russia9[,items.to.select],
-#   all.rounds$ess9[,items.to.select]
+#all.rounds = lapply(all.rounds, function(x) unhaven(x[,items.to.select]))
+
+#table(all.rounds1$ess7$cntry, all.rounds1$ess7$essround)
+
+
+ess1_9 <- Reduce("rbind", lapply(all.rounds, function(x) unhaven(x[,items.to.select])))
+#   list(
+#     all.rounds$ess1[,items.to.select],
+#     all.rounds$ess2[,items.to.select],
+#     all.rounds$ess3[,items.to.select],
+#     all.rounds$ess4[,items.to.select],
+#     all.rounds$ess5[,items.to.select],
+#     all.rounds$ess6[,items.to.select],
+#     all.rounds$ess7[,items.to.select],
+#     all.rounds$ess8[,items.to.select],
+#     all.rounds$russia7[,items.to.select],
+#     all.rounds$russia9[,items.to.select],
+#     all.rounds$ess9[,items.to.select]
 # ))
+
 
 
 # save(ess1_9, file="extradata/ess1_9_withRussia_and_weights.Rdata")
@@ -189,7 +196,7 @@ save(tab, file="data/tb2.Rdata") # with Russia round9
 
 # Test ----###################
 
-d= d[d$cntry=="ME",]
+d= tab
 
 # Plot 1 - by country #####
 
