@@ -13,7 +13,7 @@ fluidPage(title="Basic values in Europe",
                   
                   
                   h1 {
-                  font-family: 'Tahoma', cursive;
+                  font-family: 'Tahoma';
                   font-weight: 900;
                   line-height: 1.1;
                   color: #525050;
@@ -38,7 +38,7 @@ fluidPage(title="Basic values in Europe",
                   width: 100px;
                 }
                 
-                #downloadButton {
+                .dbutton {
                 float: right;
                 font-size: 10px;
                 }
@@ -165,11 +165,13 @@ conditionalPanel(
 
       tabPanel(value='by country', title=uiOutput("lang.tab1.name"),
         plotOutput('plot1'),
-        downloadButton("downloadButton", "Get plot data")
+        #downloadButton("downloadPlot", "Get plot"),
+        downloadButton("downloadButton", "Get data", class = "dbutton")
         ),
 
       tabPanel(value='by value', title=uiOutput("lang.tab2.name"),
-         plotOutput('plot2')
+         plotOutput('plot2'),
+         downloadButton("downloadButton2", "Get data", class = "dbutton")
          ),
 
       tabPanel(value='value map', title=uiOutput("lang.tab3.name"),
@@ -183,7 +185,7 @@ conditionalPanel(
       
       
       tabPanel(value="credits", title="？",
-               includeMarkdown("CREDITS.md"))
+               includeMarkdown("README.md"))
       )
   )
 ) #sidebarLayout

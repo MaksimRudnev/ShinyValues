@@ -45,7 +45,10 @@ function(input, output, session) {
   #barplot(1:10, col = gg_color_hue(10, 50, 72))
   #plot(rep(1,10), col=hcl(h = seq(15, 375, length = n + 1), l = 70, c = 200), pch=19, cex=10)
  
+ country.colors = setNames( gg_color_hue( n = length(translation.countries$cntry), 
+                                          brightness=40, beginning=0), nm = translation.countries$cntry)
  
+ barplot(rep(1, length(country.colors)),  col = country.colors, cex.names = names(country.colors))
   
 # Translate elements to some language
   #store name of language
@@ -136,15 +139,26 @@ function(input, output, session) {
    # Tab 3
    output$tab3.slider <- renderUI( 
      
-   sliderInput(inputId="round", 
-               label=translation.tab[translation.tab$element=="year.slider",lang$lang], #"Year of survey",
-               
-               
-               min=min(tab$essround), # 2002
-               max=max(tab$essround), # 2018
-               value=2018,
-               step=2, round=TRUE, animate=T, sep="")
+   # sliderInput(inputId="round", 
+   #             label=translation.tab[translation.tab$element=="year.slider",lang$lang], #"Year of survey",
+   #             
+   #             
+   #             min=min(tab$essround), # 2002
+   #             max=max(tab$essround), # 2018
+   #             value=2018,
+   #             step=2, round=TRUE, animate=T, sep="")
+   
+   radioButtons(
+     inputId = "round",
+     label = translation.tab[translation.tab$element=="year.slider",lang$lang], #"Year of survey",
+     choices = c(seq(2002, 2018, 2), 2021),
+     selected = 2021,
+     inline = F,
+     width = "100%"
    )
+
+   )
+   
    
    output$help.tab3.slider <- renderUI( 
    helpText(translation.tab[translation.tab$element=="hint.year.slider",lang$lang])
@@ -528,7 +542,19 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
       }
     )
   
-  
+  output$downloadButton2 <-  downloadHandler(
+    filename = "data.csv",
+    content = function(file) {
+      write.csv(selectedData2()$ta, file, row.names = FALSE)
+    }
+  )
+  # temp.image.file.name = tempfile(fileext = ".png")
+  # # output$downloadPlot <-  downloadHandler(
+  # #   {
+  # #   }
+  # # )
+  # 
+  # print(temp.image.file.name)
 
   # Plot 1 ####
   output$plot1 <- renderPlot({
@@ -652,8 +678,8 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
 
   
   g<-ggplot(d$means, aes(Conservation_Openness,
-                         Self_Enhancement_Self_Transcendence#,
-                   #color=cntry, 
+                         Self_Enhancement_Self_Transcendence
+                   ,color=cntry
                    #label=cntry.lab
                    ), cex=1) +
     geom_point(shape=19, size=7, alpha=.6)+
@@ -665,7 +691,8 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
 #    annotate("rect", xmin = -Inf, xmax = +Inf,   ymin = 0.42, ymax = 0.50,   fill = "gray", alpha=0.3) +
 #    annotate("rect", xmin = -0.55, xmax = -0.47,   ymin = -Inf, ymax = +Inf,   fill = "gray", alpha=0.3)+
     scale_x_continuous(breaks = seq(-1.5, 0.5, by = 0.5), limits=c(-1.5, 0.5))+
-    scale_y_continuous(breaks = seq(0, 2, by = 0.5), limits=c(0, 2))
+    scale_y_continuous(breaks = seq(0, 2, by = 0.5), limits=c(0, 2))+
+    scale_color_manual(values = country.colors)
   
   
   # Behavior on hover: if hover on point, then draw rects with CIs

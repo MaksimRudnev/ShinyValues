@@ -19,6 +19,7 @@ IS	Iceland	Исландия	Islândia
 IT	Italy	Италия	Itália
 LT	Lithuania	Литва	Lituânia
 ME	Montenegro	Черногория	Montenegro
+MK	North Macedonia	Сев.Македония	Macedónia do Norte
 NL	Netherlands	Нидерланды	Países Baixos
 NO	Norway	Норвегия	Noruega
 PL	Poland	Польша	Polônia
