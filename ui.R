@@ -13,7 +13,6 @@ fluidPage(title="Basic values in Europe",
                   
                   
                   h1 {
-                  font-family: 'Tahoma';
                   font-weight: 900;
                   line-height: 1.1;
                   color: #525050;

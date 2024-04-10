@@ -7,14 +7,15 @@ This app was created with [ShinyApps](https://shinyapps.io/), using data from
 
 Value indices are based on [Schwartz theory of basic values](https://pdfs.semanticscholar.org/dc49/e27d0ed890cd3ed2e80ca0b0107207f12a64.pdf). They were computed following [ESS EduNet](http://essedunet.nsd.uib.no/cms/topics/1/) instructions, and weighted with post-stratification weight. 
 
-Data on Russia in round 7 are taken from ESS website section "Related studies" and Russia round 9 from CESSI website. 
+Data on Russia in round 7 are taken from the ESS website section "Related studies" and Russia rounds 9 and 10 from CESSI website. 
 
+> Round 10 (2021) includes only countries that continued to use face-to-face interviews.
 
 ## Run
 
-The app is published here: http://values.maksimrudnev.com
+ [The app is published here: http://values.maksimrudnev.com]: #
 
-(Slow) mirror is here: https://rudnev.shinyapps.io/Basic_Values/
+You are here: https://rudnev.shinyapps.io/Basic_Values/
 
 To run it locally, type in the RStudio console: `shiny::runGitHub("ShinyValues", "maksimrudnev")`. (You might need to install some of the following packages to enable the app properly running on your device: *devtools, shiny, ggplot2, ggrepel, reshape2, stringr, maps, sf, readr*.)
 
