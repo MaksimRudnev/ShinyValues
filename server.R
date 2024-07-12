@@ -4,7 +4,10 @@
 #load("data/tab.dweight.R")
 #load("data/tab.pspweight_rus.R")
 
-load("data/tb2.Rdata")
+tab = readRDS("data/tb3.rds")
+tab.extra = readRDS("data/tb.extra.rds")
+#tab <- tab[!tab$variable %in% c("happy", "stflife", "freehms"),]
+#load("data/tb2.Rdata")
 #load("data/tb1.Rdata")
 #load("data/europe.Rdata")
 #tab<-tab[tab$variable!="stflife" & tab$variable!="happy",]
@@ -16,9 +19,11 @@ require("ggrepel")
 require("stringr")
 #require("sf")
 require("readr")
+library("shinyWidgets")
 
 # disable creation of PDF plots
-pdf(file = NULL)
+#pdf(file = NULL)
+#dev.off()
 
 translation.tab <- as.data.frame(read_delim(file="data/translation_elements.txt", 
                               col_types="cccc",
@@ -45,7 +50,7 @@ function(input, output, session) {
     hues = seq(beginning, beginning+360-15, length = n )
     hcl(h = hues, l = brightness, c = 200)
   }
-  #barplot(1:10, col = gg_color_hue(10, 50, 72))
+  #barplot(1:35, col = gg_color_hue(35, 70, 72))
   #plot(rep(1,10), col=hcl(h = seq(15, 375, length = n + 1), l = 70, c = 200), pch=19, cex=10)
  
  country.colors = setNames( gg_color_hue( n = length(translation.countries$cntry), 
@@ -117,8 +122,16 @@ function(input, output, session) {
      tags$span(translation.tab[translation.tab$element=="geomap.tab",lang$lang])
    )
    
+   output$othervars.tab <- renderUI(
+     #<i class="fa-solid fa-user">
+     tags$span(translation.tab[translation.tab$element=="othervars.tab",lang$lang])
+     #tags$p("&#128540;")
+     #tags$span("😀")
+     
+   )
    
-   # Tab 2
+   
+   # Tab 2 elements
    output$lang.multiple.countries.selector <- renderUI( 
       tags$html(strong(span(translation.tab[translation.tab$element=="multiple.countries.selector",lang$lang])))
    )
@@ -154,8 +167,8 @@ function(input, output, session) {
    radioButtons(
      inputId = "round",
      label = translation.tab[translation.tab$element=="year.slider",lang$lang], #"Year of survey",
-     choices = c(seq(2002, 2018, 2), 2021),
-     selected = 2021,
+     choices = c(seq(2002, 2018, 2), 2021, 2023),
+     selected = 2023,
      inline = F,
      width = "100%"
    )
@@ -202,12 +215,12 @@ function(input, output, session) {
   store.tab1 <- reactiveValues (
     ten.values = NULL,
     #ten.values.checked = FALSE,
-    four.values = NULL,
+    four.values = values$four.abbr[c(1,3)],
     #four.values.checked = FALSE,
-    two.values = values$two.abbr,
+    two.values = NULL, #values$two.abbr,
     #two.values.checked = FALSE,
     #lang = "English",
-    selected.countries = "AT"
+    selected.countries = "AT" # sample(translation.countries$cntry , 1) #
   )
   
 
@@ -288,10 +301,46 @@ function(input, output, session) {
         #store.tab1$two.values.checked <- FALSE 
       }   
     })
+  
+  # Noncentered switch on tab1 #####
+    output$noncentered.switch.tab.1 <- renderUI({
+      materialSwitch(inputId = 'noncent.switch', 
+                   label = "Use ipsatized value indices",
+                   value = TRUE,
+                   status = "primary"
+                   #onLabel = "Yes", offLabel = "No" 
+                   )
+    })
     
+    observeEvent(input$noncent.switch,
+                 if(!input$noncent.switch)
+                 #showModal(modalDialog("mld", "Switch", "Oops, you turned it on")),
+                 showNotification(
+                   HTML("You have turned ipsatization off. Please be careful with interpretation of the results, as they might have been affected by a response style and deviate from the fundamentals of value theory, for details, see (<a href = 'https://doi.org/10.1016/j.jrp.2021.104118'>Rudnev, 2021</a>)"),
+                                  type = "error"),
+                 ignoreInit = F)
+    
+    # Noncentered switch on tab2 #####
+    output$noncentered.switch.tab.2 <- renderUI({
+      materialSwitch(inputId = 'noncent.switch2', 
+                     label = "Use ipsatized value indices",
+                     value = TRUE,
+                     status = "primary"
+                     #onLabel = "Yes", offLabel = "No" 
+      )
+    })
+    
+    observeEvent(input$noncent.switch2,
+                 if(!input$noncent.switch2)
+                   #showModal(modalDialog("mld", "Switch", "Oops, you turned it on")),
+                   showNotification("You have turned ipsatization off. Please be careful with interpretation of the results, as they might have been affected by a response style.",
+                                    type = "error"),
+                 ignoreInit = F)
+    
+      
 
     
-    # Functionality of section links in the SECOND tab ####  
+    # Functionality of section links TAB 2 ####  
 selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
                                  values="SE")
     
@@ -395,8 +444,34 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
     })
     
     
+    variable.names <- reactive({
+      
+      
+      b <- levels(tab.extra$variable)
+      # names(b) <- c(translation.tab[,lang$lang][translation.tab$element=="val10.header"], 
+      #               translation.tab[,lang$lang][translation.tab$element=="val4.header"],
+      #               translation.tab[,lang$lang][translation.tab$element=="val2.header"]
+      # )
+      
+      names(b) <- sapply(b, 
+                         function(x) 
+                           translation.tab[translation.tab$element==x, lang$lang])
+      
+      
+      list("Subjective wellbeing" = b[b %in% c("happy", "stflife", "health", 
+                                               "hincfel", "aesfdrk", "pplfair", 
+                                               "sclmeet", "stfgov")],
+           "Attitudes" = b[b %in% c("gincdif", "imwbcnt", "freehms")],
+           "Other" = b[b %in% c("rlgdgr", "polintr", #"iorgact", 
+                                "lrscale", "yrbrn", "mrat")])
+      
+      
+    })
+    
+    # Tab 2 side panel ####
   output$value.selector.tab.2 <- renderUI({
-    selectInput('show_vals2', textOutput("lang.value.selector", inline=T), #'Choose value:',
+    selectInput('show_vals2', #"alala",
+                label=translation.tab[translation.tab$element=="value.selector", lang$lang],
                 choices=value.names(),
                 selected = selector.tab.2$values
                 #  choices=levels(tab$variable), selected = levels(tab$variable)[1]
@@ -406,7 +481,22 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
   observeEvent(input$show_vals2, {
     selector.tab.2$values <- input$show_vals2
   })
+  
+  # Tab 5 side panel ####
+  output$value.selector.tab.5 <- renderUI({
+    selectInput('show_vals5', 
+                label=translation.tab[translation.tab$element=="other.var.selector", lang$lang],
+                choices=variable.names(),
+                selected = "happy"
+    )
+    #str(variable.names())
+  })
+  
+  observeEvent(input$show_vals5, {
+    selector.tab.5$values <- input$show_vals5
+  })
     
+  
   
   # Functioning of UI in TAB 4 ######
   
@@ -422,13 +512,39 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
   })
   
   
+  # Functionality of TAB5 ####
+  selector.tab.5 <- reactiveValues(countries=c("RU", "AT", "GB", "FI", "NL", "GR", "HU"),
+                                   values="SE")
+  
+  output$countries.selector.tab.5 <- renderUI({
+    checkboxGroupInput('show_countries5', NULL,
+                       choices = list.of.countries(),
+                       #choiceNames = 
+                       #choiceValues = 
+                       #levels(tab$cntry), 
+                       selected = selector.tab.5$countries
+    )
+    
+  })
+  
+  observeEvent(input$show_countries5, {
+    selector.tab.5$countries <- input$show_countries5
+  })
+  
+
+  
   # Preparing data TAB 1 #### 
   #Combine the selected variables into a new data frame
   selectedData1 <- reactive({
 
   #  tab[tab$variable %in% input$show_vals & tab$cntry==input$show_countries,]
     #tab$variable <- as.factor(tab$variable)
-    ta<- tab[tab$cntry==input$show_countries,] 
+  ta<- tab[tab$cntry==input$show_countries & (
+             (tab$centered == input$noncent.switch)|
+               tab$variable %in% values$two.abbr 
+               ),] 
+  #print(head(ta, 25))
+    
     #ta$cntry <- rep(input$show_countries, nrow(ta))
     clr<-c(gg_color_hue(10, 70), "#0000ff", "#996633", "#ac3973", "#00cccc", "#FFFF00", "#737373", "#FFFFFF")
     names(clr)<-levels(ta$variable)
@@ -463,7 +579,12 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
   selectedData2 <- reactive({
     
     # select values
-    ta<- tab[tab$variable==input$show_vals2,]
+    #ta<- tab[tab$variable==input$show_vals2,]
+    
+    ta<- tab[tab$variable==input$show_vals2 & (
+      (tab$centered == input$noncent.switch2)|
+        tab$variable %in% values$two.abbr 
+    ),] 
     
     clr<-gg_color_hue(length(unique(ta$cntry)), 60)
     clr<-c(clr[seq(1, length(clr), 3)], clr[seq(2, length(clr), 3)], clr[seq(3, length(clr), 3)])
@@ -537,6 +658,49 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
   #   dt
   # })
   
+  # Preparing data for the 5 tab ####   
+  selectedData5 <- reactive({
+    
+    # select values
+    #tab.other <- tab[tab$variable %in% c("happy", "stflife", "freehms"),]
+    
+    ta <- tab.extra[tab.extra$variable==input$show_vals5,]
+    
+  
+    
+    ta$cntry.lab <- sapply(ta$cntry, function(x) translation.countries[translation.countries==x, lang$lang])
+    
+    shapes <- substr(as.character(unique(ta$cntry.lab)),1,1)[1:length(unique(ta$cntry.lab))]
+    names(shapes)<-unique(ta$cntry)
+    
+    # colors
+    # clr<-gg_color_hue(length(unique(ta$cntry)), brightness=60)
+    # clr<-c(clr[seq(1, length(clr), 3)], clr[seq(2, length(clr), 3)], clr[seq(3, length(clr), 3)])
+    # clr<-paste(clr, "16", sep="") #add transparency
+    # names(clr)<-unique(ta$cntry)
+    # 
+    # clr_line <-gg_color_hue(length(unique(ta$cntry)), brightness=50)
+    # clr_line<-c(clr_line[seq(1, length(clr_line), 3)], clr_line[seq(2, length(clr_line), 3)], clr_line[seq(3, length(clr_line), 3)])
+    # names(clr_line)<-unique(ta$cntry)
+    # 
+    # clr_line <-clr_line[names(clr_line) %in% unique(ta$cntry)]
+    # clr<-clr[names(clr) %in% unique(ta$cntry)]
+    # 
+    clr = country.colors
+    clr_line = country.colors
+    shapes <-shapes[names(shapes) %in% unique(ta$cntry)]
+    
+    # select countries
+    ta<- ta[ta$cntry %in% input$show_countries5,]
+    
+    list(ta=ta, 
+         clr=clr, clr_line = clr_line,
+         shapes=shapes
+         )
+    
+  })
+  
+  # Download buttons ####
  
   output$downloadButton <-  downloadHandler(
       filename = "data.csv",
@@ -737,7 +901,7 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
     
     
 
-    g<- g + geom_point(data = d.r[d.r$essround==input$round,],        
+    g <- g + geom_point(data = d.r[d.r$essround==input$round,],        
                        aes(x = d.r[d.r$essround==input$round,values$two.abbr[1]], 
                            y = d.r[d.r$essround==input$round,values$two.abbr[2]]#,
                            #label=NULL
@@ -824,5 +988,85 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
   #         legend.title = element_text(size = 12),
   #         plot.background = element_rect(fill="transparent"))
   # })
+  
+ # Plot 5 other vars #####
+  
+  output$plot5 <- renderPlot({
+    
+    tab5<-selectedData5()$ta
+    
+    if(nrow(tab5)>0) {
+      last_rounds <- aggregate(tab5$essround, list(tab5$cntry.lab),  max)
+      dat.labs <- tab5[paste(tab5$cntry.lab, tab5$essround) %in% paste(last_rounds$Group.1, last_rounds$x), ]
+      #print(isolate(dat.labs))
+     # print(head(tab5))
+      
+      h <- ggplot(tab5, aes(essround, y = value, fill=cntry))
+      h + geom_ribbon(aes(ymin = lower, ymax = upper), alpha =.5) + 
+        #geom_line(aes(color=cntry), size=2)+
+        geom_point(aes(color=cntry), shape=21, size=5, fill="white")+
+        geom_point(aes(color=cntry, shape=cntry), size=3)+
+        coord_cartesian(xlim = c(min(tab5$essround), max(tab5$essround) + 3)) +
+        geom_label_repel(
+          data = dat.labs,
+          aes(label = str_wrap(cntry.lab, 20), color=cntry),nudge_x = 1.1, size= 5, fill="white",
+          min.segment.length = unit(15, "points"))+ 
+        
+        
+        scale_fill_manual(values=selectedData5()$clr)+
+        scale_color_manual(values=selectedData5()$clr_line)+
+        # #scale_linetype_manual(values=selectedData2()$ln_type)+
+        scale_shape_manual(values=selectedData5()$shapes)+
+        
+        scale_x_continuous(breaks=unique(tab5$essround), minor_breaks =F)+
+        labs(title =translation.tab[translation.tab$element== input$show_vals5, lang$lang],
+             x="",#translation.tab[translation.tab$element=="x.round", lang$lang], 
+             caption=translation.tab[translation.tab$element=="copyright.caption", lang$lang], 
+             fill="", shape="", color="",
+             y="")+
+        
+        theme_minimal()+
+        theme(panel.grid.minor = element_blank(),
+              axis.line.x = element_line(color="black", size = 0.5),
+              axis.line.y = element_line(color="black", size = 0.5),
+              axis.title.x = element_text(face="bold", size=14),
+              axis.title.y = element_text(face="bold", size=14),
+              #legend.text = element_text(size = 12),
+              legend.position = "none",
+              axis.text.x = element_text(size = 12),
+              plot.title= element_text(face="bold", size=16)
+        )
+      
+    } else {
+      qplot(1, 1, geom="text", label=translation.tab[translation.tab$element=="choose.some.countries",lang$lang])+xlim(0,2)+
+        geom_segment(aes(x=0.6, y=1, xend=0.2, yend=1), arrow=arrow(), size=1)+  theme_void()
+    }
+    
+    
+    
+    
+    
+    
+  
+    
+  })
+  
+  
+  ## Plot 5 footnote ####
+  output$footnote.tab.5 <- renderUI({
+    HTML(c("<div style='padding:10px 20px 10px 20px;'><small>",
+      "<b>",
+      translation.tab[translation.tab$element=="footnote",lang$lang],
+      "</b>",
+      translation.tab[
+          translation.tab$element==paste0("footnote.", input$show_vals5),
+          lang$lang],
+      "<br>",
+      translation.tab[translation.tab$element=="plot5note",lang$lang],
+      "</small></p>")
+    )
+    
+    
+  })
   
 }) # close shinyServer

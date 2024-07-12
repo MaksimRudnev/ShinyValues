@@ -9,7 +9,7 @@ Value indices are based on [Schwartz theory of basic values](https://pdfs.semant
 
 Data on Russia in round 7 are taken from the ESS website section "Related studies" and Russia rounds 9 and 10 from CESSI website. 
 
-> Round 10 (2021) includes only countries that continued to use face-to-face interviews.
+Round 10 (2021) includes only countries that continued to use face-to-face interviews.
 
 ## Run
 
@@ -22,7 +22,9 @@ To run it locally, type in the RStudio console: `shiny::runGitHub("ShinyValues",
 
 ## Issues and problems
 
-The tool is purely exploratory, don’t forget about cross-country comparability and measurement invariance problems. 
+The tool is purely exploratory. 
+
+‼️ _Cross-country comparability and measurement invariance are not guaranteed!_ 
 
 Report any issues https://github.com/MaksimRudnev/ShinyValues/issues, visit [my website](http://www.maksimrudnev.com), or send me a message maksim dot rudnev at gmail.com.
 

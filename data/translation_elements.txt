@@ -7,6 +7,7 @@ tab1.name	by country	по странам	de país
 tab2.name	by value	по ценностям	de valor
 tab3.name	two-dimensional	в двух измерениях	dois dimensões
 geomap.tab	map of Europe	карта Европы	mapa europeu
+othervars.tab	""	""	""
 general.title	Trends in basic values of European countries	Динамика ценностей европейских стран	Tendências nos valores básicos nos países europeus
 SD	Self-Direction	Самостоятельность	Auto-direção
 HE	Hedonism	Гедонизм	Hedonismo
@@ -18,14 +19,42 @@ UN	Universalism	Универсализм	Universalismo
 BE	Benevolence	Благожелательность	Benevolência
 PO	Power	Власть-Богатство	Poder
 AC	Achievement	Достижение	Realização
-Openness	Openness to change	Открытость изменениям	Abertura a mudança
+Openness	Openness to Change	Открытость изменениям	Abertura a mudança
 Conserv	Conservation	Сохранение	Conservação
 Self_Enhance	Self-Enhancement	Самоутверждение	Autopromoção
 Self_Trans	Self-Transcendence	Забота о людях и природе	Autotranscendência
-Conservation_Openness	Conservation - Openness to change	Сохранение - Открытость изменениям	Conservação – Abertura a mudança
+Conservation_Openness	Conservation - Openness to Change	Сохранение - Открытость изменениям	Conservação – Abertura a mudança
 Self_Enhancement_Self_Transcendence	Self-Enhancement - Self-Transcendence	Самоутверждение - Забота о людях и природе	Autopromoção – Autotranscendência
-multiple.countries.selector	Choose countries to show:	Выберите страны:	Escolhe os pais:
+happy	Happiness	Счастье	Felicidade
+stflife	Life satisfaction	Удовлетворенность жизнью	stflife
+freehms	Homophobia	freehms	freehms
+health	Health	health	health
+hincfel	Feeling about income	hincfel	hincfel
+aesfdrk	Feel safely at dark	aesfdrk	aesfdrk
+pplfair	Trust strangers	Trust	Trust
+sclmeet	Socially meet	sclmeet	sclmeet
+stfgov	Satisfied with government	stfgov	stfgov
+polintr	Interest in politics	polintr	polintr
+lrscale	Left-right orientation (Right↑)	lrscale	lrscale
+gincdif	More equal pay	More equal pay	More equal pay
+imwbcnt	Immigrants make country better	Immigrants make country	Immigrants make country
+rlgdgr	Religiosity	Religious	Religious
+yrbrn	Year born	yrbrn	yrbrn
+mrat	mrat	mrat	mrat
+footnote	Note.	Примечание.	Nota.
+footnote.happy	<i>"Taking all things together, how happy would you say you are?"</i> Extremely happy (0) - Extremely unhappy (10)	"В целом насколько вы счастливы?"	"Happy"
+footnote.stflife	<i>"All things considered, how satisfied are you with your life as a whole nowadays? Please answer using this card, where 0 means extremely dissatisfied and 10 means extremely satisfied."</i>	"Satisfied"	"Satisfied"
+footnote.freehms	<i>"Gay men and lesbians should be free to live their own life as they wish"</i> Disagree strongly (5) - Agree strongly (1)	"Homophobic?"	"Homophobic?"
+footnote.health	<i>Subjective general health</i>, Very good (5), Very bad (1)"	""	""
+footnote.gincdif	<i>"Government should reduce differences in income levels"</i>	""	""
+footnote.hincfel	<i>Feeling about household's income nowadays, "Living comfortably on present income" (4), Very difficult on present income (1)	""	""
+footnote.rlgdgr	<i>How religious are you?</i> "Not at all religious (0), Very religious (10)	""	""
+footnote.pplfair	"Most people try to take advantage of you, or try to be fair, "Most people try to take advantage of me" (0) - "Most people try to be fair" (10)	""	""
+footnote.mrat	This is a technical variable used in computation of value indices. It is a mean of all value items (higher score means that the respondent agreed that all value portraits were "like me"). It is not clear what it indicates beside response style.	Примечание.	Nota.
+plot5note	Thickness of the line indicates 95% confidence interval.	Толщина линии отражает 95% доверительный интервал.	""
+multiple.countries.selector	Countries:	Выберите страны:	Escolhe os pais:
 value.selector	Choose value:	Выберите ценность:	Escolhe um valor:
+other.var.selector	Explore more variables across countries and years of ESS. This section is in progress.	Выберите переменную:	Escolhe um variável:
 north	North	Север	Norte
 east	East	Восток	Leste
 west	West	Запад	Oeste
@@ -35,7 +64,8 @@ hint.year.slider	Put cursor over the points to see confidence intervals. Click o
 lang.selector	Choose language:	Выберите язык:	Escolha um idioma
 credits	Developed by Maksim Rudnev	Разработал Максим Руднев	Desenvolvido por Maksím Rudnev
 choose.some.values	Choose some values	Выберите какие-нибудь ценности	Escolhe o valor
-copyright.caption	© Maksim Rudnev, 2017-2023. Вased on European Social Survey data.	© Максим Руднев, 2017-2023. Данные Европейского социального исследования.	© Maksím Rudnev, 2017-2022. Dados de European Social Survey.
+choose.some.countries	Choose some countries	Выберите какие-нибудь страны	Escolhe o pais
+copyright.caption	© Maksim Rudnev, 2017-2024. Вased on European Social Survey data.	© Максим Руднев, 2017-2024. Данные Европейского социального исследования.	© Maksím Rudnev, 2017-2024. Dados de European Social Survey.
 x.round	Year of survey	Год опроса	Ano de inquérito
 y.value	value importance	Значимость ценности	Valor
 choose.year.tab4	Choose year	Выберие год	Escolhe o ano
