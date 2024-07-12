@@ -55,6 +55,7 @@ plot5note	Thickness of the line indicates 95% confidence interval.	Толщин�
 multiple.countries.selector	Countries:	Выберите страны:	Escolhe os pais:
 value.selector	Choose value:	Выберите ценность:	Escolhe um valor:
 other.var.selector	Explore more variables across countries and years of ESS. This section is in progress.	Выберите переменную:	Escolhe um variável:
+ipsat.not	You have turned ipsatization off. Please be careful with interpretation of the results, as they might have been affected by a response style and deviate from the hierarchical nature of value concept, for details see (<a href = 'https://doi.org/10.1016/j.jrp.2021.104118'>Rudnev, 2021</a>)	You have turned ipsatization off. Please be careful with interpretation of the results, as they might have been affected by a response style and deviate from the hierarchical nature of value concept, for details see (<a href = 'https://doi.org/10.1016/j.jrp.2021.104118'>Rudnev, 2021</a>)	You have turned ipsatization off. Please be careful with interpretation of the results, as they might have been affected by a response style and deviate from the hierarchical nature of value concept, for details see (<a href = 'https://doi.org/10.1016/j.jrp.2021.104118'>Rudnev, 2021</a>).
 north	North	Север	Norte
 east	East	Восток	Leste
 west	West	Запад	Oeste

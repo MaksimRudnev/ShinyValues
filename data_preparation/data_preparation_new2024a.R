@@ -232,8 +232,6 @@ saveRDS(tb.values, "data/tb3.rds")
 
 
 
-
-
 # Tableau
 
 load("data/tb3.Rdata") # write.csv(tab, file = "data/tb2.csv")

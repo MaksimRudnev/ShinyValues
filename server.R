@@ -316,9 +316,16 @@ function(input, output, session) {
                  if(!input$noncent.switch)
                  #showModal(modalDialog("mld", "Switch", "Oops, you turned it on")),
                  showNotification(
-                   HTML("You have turned ipsatization off. Please be careful with interpretation of the results, as they might have been affected by a response style and deviate from the fundamentals of value theory, for details, see (<a href = 'https://doi.org/10.1016/j.jrp.2021.104118'>Rudnev, 2021</a>)"),
-                                  type = "error"),
-                 ignoreInit = F)
+                   HTML(translation.tab[translation.tab$element=="ipsat.not", lang$lang]),
+                                  type = "error",
+                 #ignoreInit = F,
+                 closeButton = F,
+                 duration = NULL,
+                 id = "ipsat.notification")
+                 else
+                   removeNotification("ipsat.notification")
+                 )
+    
     
     # Noncentered switch on tab2 #####
     output$noncentered.switch.tab.2 <- renderUI({
@@ -329,13 +336,20 @@ function(input, output, session) {
                      #onLabel = "Yes", offLabel = "No" 
       )
     })
-    
+
     observeEvent(input$noncent.switch2,
                  if(!input$noncent.switch2)
                    #showModal(modalDialog("mld", "Switch", "Oops, you turned it on")),
-                   showNotification("You have turned ipsatization off. Please be careful with interpretation of the results, as they might have been affected by a response style.",
-                                    type = "error"),
-                 ignoreInit = F)
+                   showNotification(
+                     HTML(translation.tab[translation.tab$element=="ipsat.not", lang$lang]),
+                     type = "error",
+                     #ignoreInit = F,
+                     closeButton = F,
+                     duration = NULL,
+                     id = "ipsat.notification")
+                 else
+                   removeNotification("ipsat.notification")
+    )
     
       
 
@@ -736,7 +750,7 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
       
     h <- ggplot(d, aes(essround,y = value))
     h + geom_ribbon(aes(ymin = lower, ymax = upper, fill=variable),  alpha=.2) + 
-      geom_line(aes(color=variable, size=variable))+
+      geom_line(aes(color=variable, linewidth=variable))+
       coord_cartesian(xlim = c(min(d$essround), max(d$essround) + 3)) +
       geom_point(aes(color=variable, shape=variable), size=3) +
       
@@ -754,7 +768,7 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
       scale_fill_manual(values=selectedData1()$clr_line)+
       scale_color_manual(values=selectedData1()$clr_line)+
       scale_shape_manual(values=selectedData1()$ln_type)+
-      scale_size_manual(values=selectedData1()$ln_width)+
+      scale_linewidth_manual(values=selectedData1()$ln_width)+
       
       theme_minimal()+theme(panel.grid.minor = element_blank(),
                             axis.line.x = element_line(color="black", size = .5),
@@ -788,7 +802,7 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
     h <- ggplot(tab2, aes(essround, y = value, fill=cntry))
     h + geom_ribbon(aes(ymin = lower, ymax = upper)) + 
       geom_line(aes(color=cntry #, linetype=cntry
-                    ), size=2)+
+                    ), linewidth=2)+
       geom_point(aes(color=cntry), shape=21, size=5, fill="white")+
       geom_point(aes(color=cntry, shape=cntry), size=3)+
       coord_cartesian(xlim = c(min(tab2$essround), max(tab2$essround) + 3)) +
