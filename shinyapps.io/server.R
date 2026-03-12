@@ -53,6 +53,30 @@ function(input, output, session) {
   #barplot(1:35, col = gg_color_hue(35, 70, 72))
   #plot(rep(1,10), col=hcl(h = seq(15, 375, length = n + 1), l = 70, c = 200), pch=19, cex=10)
  
+  
+  year_format = function(x, type = "keep.first") {
+    
+    if(type == "keep.first") {
+      x[-1]  = paste0("'",substr(x[-1], 3,4)) 
+    }
+    
+    if(type == "squish") {
+      short.distance.pos = which(diff(x) < 2)+1
+      x[short.distance.pos]  = paste0("'",substr(x[short.distance.pos], 3,4))  
+      # 
+      # shorten.index = c(which(diff(x)<2), max(which(diff(x)<2))+1)
+      # x[shorten.index]  = paste0("'",substr(x[shorten.index], 3,4))  
+    }
+    
+    if(type == "density.all") {
+      if(length(x) > 5)
+         x = paste0("'",substr(x, 3,4))
+    }
+    
+    return(x)
+    
+  }
+  
  country.colors = setNames( gg_color_hue( n = length(translation.countries$cntry), 
                                           brightness=40, beginning=0), nm = translation.countries$cntry)
  
@@ -758,7 +782,8 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
         data = subset(d, essround==max(essround)),
         aes(label = str_wrap(variable.lab, 20), fill=variable), segment.colour = "grey60", col="black", nudge_x = 1.1, size= 5, alpha=.8)+
       
-      scale_x_continuous(breaks=unique(d$essround), minor_breaks =F) +
+      scale_x_continuous(breaks=unique(d$essround), minor_breaks =F, 
+                         labels = year_format) +
       labs(x =     translation.tab[translation.tab$element=="x.round", lang$lang],
            y =     translation.tab[translation.tab$element=="y.value", lang$lang],
            caption=translation.tab[translation.tab$element=="copyright.caption", lang$lang], 
@@ -817,7 +842,9 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
       # #scale_linetype_manual(values=selectedData2()$ln_type)+
        scale_shape_manual(values=selectedData2()$shapes)+
       
-      scale_x_continuous(breaks=unique(tab2$essround), minor_breaks =F)+
+      scale_x_continuous(breaks=unique(tab2$essround), minor_breaks =F,
+                         labels = year_format
+                         )+
       labs(title =translation.tab[translation.tab$element== input$show_vals2, lang$lang],
            x=translation.tab[translation.tab$element=="x.round", lang$lang], 
            caption=translation.tab[translation.tab$element=="copyright.caption", lang$lang], 
@@ -1015,6 +1042,7 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
       #print(isolate(dat.labs))
      # print(head(tab5))
       
+      print(dput(unique(tab5$essround)))
       h <- ggplot(tab5, aes(essround, y = value, fill=cntry))
       h + geom_ribbon(aes(ymin = lower, ymax = upper), alpha =.5) + 
         #geom_line(aes(color=cntry), size=2)+
@@ -1032,7 +1060,8 @@ selector.tab.2 <- reactiveValues(countries=c("RU", "BE", "UK", "SE", "ES"),
         # #scale_linetype_manual(values=selectedData2()$ln_type)+
         scale_shape_manual(values=selectedData5()$shapes)+
         
-        scale_x_continuous(breaks=unique(tab5$essround), minor_breaks =F)+
+        scale_x_continuous(breaks=sort(unique(tab5$essround)), minor_breaks =F,
+                           labels = function(x) year_format(x, type = "squish" ))+
         labs(title =translation.tab[translation.tab$element== input$show_vals5, lang$lang],
              x="",#translation.tab[translation.tab$element=="x.round", lang$lang], 
              caption=translation.tab[translation.tab$element=="copyright.caption", lang$lang], 

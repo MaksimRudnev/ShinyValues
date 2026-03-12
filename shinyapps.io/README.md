@@ -57,11 +57,11 @@ European Social Survey European Research Infrastructure (ESS ERIC) (2023) ESS ro
 
 ### Russian data
 
-Data of Russian social survey based on ESS program. The survey is conducted by CESSI (Institute for comparative social research) in ____ (dates are specified below) by face-to-face interviews in respondent's homes based on probability random sample of population of Russia 15 years old and over. In ___ particular round ____ interviews were conducted. The methodological specification and technical details of the survey are located in www.ess-ru.ru and www.europeansocialsurvey.org.
+Part of the data for Russia are coming from Russian Social Survey which is based on ESS program. The survey is conducted by CESSI (Institute for comparative social research) by face-to-face interviews in respondent's homes based on probability random sample of population of Russia 15 years old and over. The data and documentation are openly available at https://www.cessi.ru/file-share.
 
   - Round 7 (ESS), Round 5 of RSS – December 2014-Febrary 2015, sample size of 2445  interviews
   - Round 9 (ESS), Round 7 of RSS – November 2018-February 2019, sample size of 2416 interviews.
   - Round 10 (ESS), Round 8 of RSS – November 2021-February 2019, sample size of 2416 interviews.
-
+  - Round 11 (ESS), Round 9 of RSS - September 2024-November 2024, sample size of 2560 interviews [upcoming]
     
     

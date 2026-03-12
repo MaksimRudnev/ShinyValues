@@ -133,11 +133,11 @@ fluidPage(title="Basic values in Europe",
               ),
               
               #...Conditional tab 3 value map #####
-              conditionalPanel(
-                'input.dataset === "value map"',
-                
-                uiOutput("tab3.slider"),
-                uiOutput("help.tab3.slider") 
+    #          conditionalPanel(
+    #            'input.dataset === "value map"',
+    #            
+    #            uiOutput("tab3.slider"),
+    #            uiOutput("help.tab3.slider") 
                 
                 # sliderInput("round", textOutput("lang.year.slider", inline=T), #"Year of survey",
                 # 
@@ -147,17 +147,17 @@ fluidPage(title="Basic values in Europe",
                 #             step=2, round=TRUE, animate=T, sep=""),
                 # #helpText("Put cursor over the points to see confidence intervals and click to see the change.")
                 # helpText(textOutput("lang.hint.year.slider", inline=T))
-              ),
+    #          ),
               
               #...Conditional tab 4 geo map Europe #####
-              conditionalPanel(
-                'input.dataset === "geo map"',
-                
-                uiOutput("tab4.slider"),
-                uiOutput("values.selector.tab4")
-                
-              ),
-              
+    #          conditionalPanel(
+    #            'input.dataset === "geo map"',
+    #            
+    #            uiOutput("tab4.slider"),
+    #            uiOutput("values.selector.tab4")
+    #            
+    #          ),
+    #          
               #...Conditional tab 5 OTHER variables #####
               conditionalPanel(
                 'input.dataset === "other vars"',
@@ -192,11 +192,11 @@ fluidPage(title="Basic values in Europe",
                          downloadButton("downloadButton2", "Get data", class = "dbutton")
                 ),
                 
-                tabPanel(value='value map', title=uiOutput("lang.tab3.name"),
-                         plotOutput('plot3', height = "600px", click = clickOpts(id = "plot_click"),
-                                    hover=hoverOpts(id="plot_hover", delay =1, nullOutside=TRUE)
-                         )
-                ),
+    #           tabPanel(value='value map', title=uiOutput("lang.tab3.name"),
+    #                     plotOutput('plot3', height = "600px", click = clickOpts(id = "plot_click"),
+    #                                hover=hoverOpts(id="plot_hover", delay =1, nullOutside=TRUE)
+    #                     )
+    #            ),
                 # tabPanel(value='geo map', title=uiOutput("lang.geomap.tab"),
                 #     plotOutput('plot4')     
                 #          ),
@@ -207,7 +207,7 @@ fluidPage(title="Basic values in Europe",
                 ),
                 
                 tabPanel(value='other vars', 
-                         icon = icon("face-smile-wink"),
+                         icon = icon("flask"),
                          title = "",# uiOutput("othervars.tab"),
                          plotOutput('plot5'),
                          uiOutput("footnote.tab.5")

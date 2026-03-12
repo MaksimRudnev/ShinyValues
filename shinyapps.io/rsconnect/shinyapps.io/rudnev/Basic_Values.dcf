@@ -1,0 +1,12 @@
+name: Basic_Values
+title: Basic_Values
+username:
+account: rudnev
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 200518
+bundleId: 11700789
+url: https://rudnev.shinyapps.io/Basic_Values/
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: data/tb2.Rdata

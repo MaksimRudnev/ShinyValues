@@ -1,28 +1,197 @@
 library(LittleHelpers) # Installation  devtools::install_github("maksimrudnev/LittleHelpers")
 library(reshape2)
 library(dplyr)
-# ~~~~~~ Offline version ~~~~~~~~~~~ #####
+
+# ~~~~~~ Read data ~~~~~~~~~~~ #####
 library(haven)
+library(magrittr)
+library(lubridate)
 #data.folder = "/Users/maksimrudnev/Library/Mobile Documents/com~apple~CloudDocs/DATA/European Social Survey/Data/R1-10 fullest 2022/"
-data.folder = "/Users/maksimrudnev/Library/Mobile Documents/com~apple~CloudDocs/DATA/European Social Survey/Data/R1-10 fullest 2023/"
+data.folder = "/Users/maksimrudnev/Library/Mobile Documents/com~apple~CloudDocs/DATA/European Social Survey/Data/R1-11 fullest 2025/"
 ess.l <- lapply(setNames(nm=list.files(data.folder)), function(x) read_sav(paste0(data.folder, x)))
 
-r.11.path = "/Users/maksimrudnev/Library/Mobile Documents/com~apple~CloudDocs/DATA/European Social Survey/Data/ESS11/ESS11_2.0.sav"
-r11 <- read_sav(r.11.path)
 
-comm.vars = lapply(append(ess.l,list(r11=r11)), colnames) %>%
+# adjustments for  Russia files ####
+# r7
+names(ess.l$ESS7RU_main_data.sav)<-tolower(names(ess.l$ESS7RU_main_data.sav))
+ess.l$ESS7RU_main_data.sav %<>%
+  mutate(essround = 7,
+         pspwght = 1,
+         pweight = 0#,
+         # stflife = car::Recode(stflife, "c(77,88,99) = NA"),
+         # happy   = car::Recode(happy,   "c(77,88,99) = NA"),
+         # freehms = car::Recode(freehms, "c(8,9) = NA")
+         )
+
+for(v in c('health', 'hincfel', 'polintr', 'gincdif', 'freehms', values$items))
+  ess.l$ESS7RU_main_data.sav[[v]] %<>% car::Recode("c(8,9) = NA")
+for(vv in c('pplfair', 'sclmeet', 'stfgov', 'lrscale', 'imwbcnt'))
+  ess.l$ESS7RU_main_data.sav[[vv]] %<>% car::Recode("c(77,88,99) = NA")
+  
+
+# r9
+ess.l$`data_RSS wave9-Russia_Eng labels_international ver 01.sav` <- 
+  dplyr::mutate(ess.l$`data_RSS wave9-Russia_Eng labels_international ver 01.sav`, 
+                essround = 9,
+                pweight = 0,
+                pspwght = 1)
+# r10
+ess.l$`Максиму_R-10_ База данных РСИ-ESS-HSE.sav` <- 
+          dplyr::mutate(ess.l$`Максиму_R-10_ База данных РСИ-ESS-HSE.sav`, 
+               essround = 10,
+               pweight = 0,
+               pspwght = 1,
+               inwyye = 2022)
+
+
+
+# r11
+names(ess.l$`База данных РСИ 2024.sav`) <- sapply(names(ess.l$`База данных РСИ 2024.sav`), function(x)
+  if( x %in% paste0(values$items, "a")) 
+    return(gsub("a$", "", x)) 
+  else 
+    x
+  )
+
+# all(values$items %in% names(ess.l$`База данных РСИ 2024.sav`))
+
+ess.l$`База данных РСИ 2024.sav` <- 
+  dplyr::mutate(ess.l$`База данных РСИ 2024.sav`, 
+                essround = 11,
+                pweight = 0,
+                pspwght = 1,
+                inwyye = 2024)
+
+
+
+# adjustments for round 11
+# r11$pspwght = 1
+
+
+apply(ess.l[[3]][ess.l[[3]]$essround==10, paste0(values$items, "a")], 2, 
+      function(x) c(values=sum(!is.na(x))/length(x)))
+
+apply(ess.l[[3]][ess.l[[3]]$essround==11, values$items], 2, 
+      function(x) c(values=sum(!is.na(x))/length(x)))
+
+for(v in values$items)
+  ess.l[[3]][[v]] = ifelse(ess.l[[3]]$essround == 11, ess.l[[3]][[paste0(v,"a")]], ess.l[[3]][[v]])
+
+
+# ess.l$essr11 <- r11
+# 
+# ess.l <- lapply(setNames(nm = names(ess.l)), function(x) {
+#   if (x == "ESS10_self_completion.sav") {
+#     ess.l[[x]]$mode = "self-completion"
+#     for(v in values$items)  ess.l[[x]][[v]] <- NA
+#     ess.l[[x]]
+#   } else {
+#     ess.l[[x]]$mode = "f2f"
+#     ess.l[[x]]
+#   }
+# })
+
+
+table(ess.l[[3]]$cntry, ess.l[[3]]$impdiff,
+ess.l[[3]]$impdiffa, useNA = "a") %>% as.data.frame %>% filter(Freq >0) %>%
+  dcast(Var1 + Var2 ~ Var3)
+
+
+# year of interview ####
+
+# fixing interview date in the combined file
+ess.l[[3]]$inwyye = ifelse(is.na(ess.l[[3]]$inwyye), year(as_date(ess.l[[3]]$inwde)), ess.l[[3]]$inwyye)
+# fixing interview date in Italy r2
+ess.l$`ESS2IT-2.sav`$inwyye = ess.l$`ESS2IT-2.sav`$inwyr
+# fixing interview date in Ukraine r10
+ess.l$`ESS Round 10 Ukraine.sav`$inwyye = year(as_date(ess.l$`ESS Round 10 Ukraine.sav`$inwde))
+
+# checks
+all(sapply(ess.l, function(x) any(c("inwyye")   %in% colnames(x))))
+
+# checks = fix  later the missing date by using default year of the round
+lapply(ess.l, function(x) sum(is.na(x$inwyye))/nrow(x)) 
+table(ess.l$ESS4AT.sav$inwyye, useNA  = "a")
+table(ess.l[[3]]$inwyye, useNA  = "a")
+
+table(is.na(ess.l[[3]]$inwyye), ess.l[[3]]$mode, useNA  = "a")
+
+
+# add the survey mode
+ess.l = lapply(ess.l, function(x) { 
+  if(!"mode" %in% colnames(x) ) {
+    x$mode = 1
+  }
+  return(x)
+})
+
+# add interview language
+ess.l = lapply(ess.l, function(x) { 
+  if(!any(grepl("lnghom", colnames(x) ) )) {
+    x$lnghom = NA
+  }
+  
+  x$lnghom = apply(x[,grepl("lnghom", colnames(x))], 1, 
+                   function(y) {
+                     y[y==""]<-NA
+                     ifelse(all(is.na(y)), NA, na.omit(y)[[1]])
+                     
+                     })
+  
+  return(x)
+})
+
+# EE = ess.l$`ESS1e06_7-ESS2e03_6-ESS3e03_7-ESS4e04_6-ESS5e03_5-ESS6e02_6-ESS7e02_3-ESS8e02_3-ESS9e03_2-ESS10-ESS10SC-ESS11-subset.sav` %>% filter(cntry=="EE") 
+# table(EE$essround, EE$lnghom, useNA = "a")
+
+# If Germany is East
+ess.l$`ESS1e06_7-ESS2e03_6-ESS3e03_7-ESS4e04_6-ESS5e03_5-ESS6e02_6-ESS7e02_3-ESS8e02_3-ESS9e03_2-ESS10-ESS10SC-ESS11-subset.sav` %<>% 
+  mutate(
+  regionde_char = as.character(lab_to_fac(regionde)), 
+  region_char = as.character(lab_to_fac(region))) %>%  
+  mutate(regionde_char = ifelse(is.na(regionde_char), 
+                                region_char, regionde_char)) %>%
+  mutate(East_germ = ifelse(cntry=="DE", 
+                            regionde_char %in% c(
+                              "Berlin",                
+                              "Brandenburg",           
+                              "Mecklenburg-Vorpommern",
+                              "Sachsen",               
+                              "Sachsen-Anhalt",        
+                              "Thüringen"
+                            ),
+                            NA))
+
+ess.l = lapply(ess.l, function(x) {
+  if(!any(grepl("East_germ", colnames(x) ) )) {
+    x$East_germ = NA
+  }
+  x
+  })
+
+
+# Common variables to extract
+
+comm.vars = lapply(ess.l, colnames) %>%
   melt() %>% select(1) %>% table() %>% as.data.frame %>%
-  arrange(desc(Freq)) %>% filter(Freq>11)  %>% select(1) %>% unlist %>% as.character
+  arrange(desc(Freq)) %>% filter(Freq>11) %>% select(1) %>% unlist %>% as.character
+
+
 
 #label_table(ess.l$ESS5ATe1_1.sav[,comm.vars])
 
 extra.vars = c('happy', 'stflife', 'health', 'hincfel', 'aesfdrk', 'pplfair', 'sclmeet',
                'stfgov', 'polintr', 'lrscale',
                'gincdif', 'imwbcnt', 'freehms',
-               'rlgdgr')
-               
+               'rlgdgr', 'lnghom', "East_germ")
+
 extra.vars.rev = c('health', 'hincfel', 'aesfdrk',
-                  "gincdif", "polintr")        
+                   "gincdif", "polintr") 
+
+
+all(extra.vars %in% comm.vars)
+all(extra.vars.rev %in% comm.vars)
+sapply(ess.l, function(x) any(c("mode")   %in% colnames(x)))
 
 # stflife	How satisfied with life as a whole
 # health	Subjective general health (Reversed)
@@ -64,84 +233,15 @@ extra.vars.rev = c('health', 'hincfel', 'aesfdrk',
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# adjustments for  Russia files 
-# r7
-names(ess.l$ESS7RU_main_data.sav)<-tolower(names(ess.l$ESS7RU_main_data.sav))
-ess.l$ESS7RU_main_data.sav %<>%
-  mutate(essround = 7,
-         pspwght = 1,
-         pweight = 1#,
-         # stflife = car::Recode(stflife, "c(77,88,99) = NA"),
-         # happy   = car::Recode(happy,   "c(77,88,99) = NA"),
-         # freehms = car::Recode(freehms, "c(8,9) = NA")
-         )
-
-for(v in c('health', 'hincfel', 'polintr', 'gincdif', 'freehms'))
-  ess.l$ESS7RU_main_data.sav[[v]] %<>% car::Recode("c(8,9) = NA")
-for(vv in c('pplfair', 'sclmeet', 'stfgov', 'lrscale', 'imwbcnt'))
-  ess.l$ESS7RU_main_data.sav[[vv]] %<>% car::Recode("c(77,88,99) = NA")
-  
-         
-for(v in values$items) ess.l$ESS7RU_main_data.sav[,v][ess.l$ESS7RU_main_data.sav[,v] %in% c(8, 9)]<-NA
-
-# r9
-ess.l$`data_RSS wave9-Russia_Eng labels_international ver 01.sav` <- 
-  dplyr::mutate(ess.l$`data_RSS wave9-Russia_Eng labels_international ver 01.sav`, 
-                essround = 9,
-                pweight = 0,
-                pspwght = 1)
-# r10
-ess.l$`Максиму_R-10_ База данных РСИ-ESS-HSE.sav` <- 
-          dplyr::mutate(ess.l$`Максиму_R-10_ База данных РСИ-ESS-HSE.sav`, 
-               essround = 10,
-               pweight = 0,
-               pspwght = 1)
-# r11
-ess.l$russia_r11 <- haven::read_sav("/Users/maksimrudnev/Library/Mobile Documents/com~apple~CloudDocs/DATA/European Social Survey/Data/ESS11/Russia/База данных РСИ 2024.sav")
-
-names(ess.l$russia_r11) <- sapply(names(ess.l$russia_r11), function(x)
-  if( x %in% paste0(values$items, "a")) 
-    return(gsub("a$", "", x)) 
-  else 
-    x
-  )
-
-# values$items %in% names(ess.l$russia_r11)
-# extra.vars %in% names(ess.l$russia_r11)
-# extra.vars.rev %in% names(ess.l$russia_r11)
-
-ess.l$russia_r11 <- 
-  dplyr::mutate(ess.l$russia_r11, 
-                essround = 11,
-                pweight = 0,
-                pspwght = 1)
-
-
-
-# adjustments for round 11
-r11$pspwght = 1
-names(r11)[names(r11) %in% paste0(values$items, "a")] <- gsub("a$", "", names(r11)[names(r11) %in% paste0(values$items, "a")])
-
-ess.l$essr11 <- r11
-
-ess.l <- lapply(setNames(nm = names(ess.l)), function(x) {
-  if (x == "ESS10_self_completion.sav") {
-    ess.l[[x]]$mode = "self-completion"
-    for(v in values$items)  ess.l[[x]][[v]] <- NA
-    ess.l[[x]]
-  } else {
-    ess.l[[x]]$mode = "f2f"
-    ess.l[[x]]
-  }
-})
 
 #save(ess.l, file="extradata/ess1_10_list.Rdata")
 # some common variables
-items.to.select <- c("cntry", "essround", values$items, "dweight", "pspwght",  "idno", 'yrbrn', 
-                     # "happy", "stflife", "freehms", 
+items.to.select <- c("cntry", "essround", 'inwyye',
+                     values$items, "dweight", "pspwght",  "idno", 
+                     'yrbrn', "gndr", "eduyrs", 
                      extra.vars,
-                     "mode"
-                     #"pweight",
+                     "mode",
+                     "pweight"
 )
 
 
@@ -154,9 +254,10 @@ items.to.select <- c("cntry", "essround", values$items, "dweight", "pspwght",  "
 
 ess1_11 <- Reduce("rbind", lapply(ess.l, function(x) unhaven(x[,items.to.select])))
 
-# save(ess1_11, file="extradata/ess1_11_list.Rdata")
+save(ess1_11, file="extradata/ess1_11_df.Rdata")
 # crosstab("cntry", "essround", drop_labs(untibble(ess1_11)))
-# load("extradata/ess1_10_withRussia_merged.Rdata")
+
+   
 
 # reverse extra vars
 for(v in extra.vars.rev) ess1_11[,v] <- max(ess1_11[,v], na.rm = T) - ess1_11[,v] + 1
@@ -169,14 +270,34 @@ ess1_11 <- ess_values(ess1_11, v2=T, v4=T, v10=T, center=T, abbr=T)
 ess1_11 <- ess_values(ess1_11, v2=F, v4=T, v10=T, center=F, abbr=T, suffix = ".non")
 
 
+# Make the year of the survey 
+
+ess1_11$year = ifelse(is.na(ess1_11$inwyye), 
+                      ifelse(ess1_11$essround == 10, 2021, 
+                             ifelse(ess1_11$essround == 11, 2023,
+                                    ess1_11$essround*2 + 2000)),
+                      ess1_11$inwyye)
+
+ess1_11 %<>% 
+  group_by(essround, cntry) %>% 
+  mutate(modal.year  = median(year)) %>%
+  ungroup()
+
+table(
+      ess1_11$modal.year, 
+      ess1_11$essround, ess1_11$cntry=="DE")
+
+
+
 # Compute weighted country means and standard errors 
 library("survey")
-
 
 #table(ess1_11$cntry, ess1_11$essround, is.na(ess1_11[,"pspwght"]))
 ess1_11[is.na(ess1_11[,"pspwght"]),"pspwght"] <- 1 # BG, CZ, EE, FI, FR, HR, HU, 
 #table(ess1_11$cntry, ess1_11$essround, is.na(ess1_11[,"dweight"]))
 ess1_11[is.na(ess1_11[,"dweight"]),"dweight"] <- 1 #(LT, LV, RO)
+
+table(ess1_11$cntry, ess1_11$essround, is.na(ess1_11[,"Openness"]))
 
 table(ess1_11$cntry, ess1_11$essround, !is.na(ess1_11[,extra.vars[[9]]]))
 
@@ -191,7 +312,7 @@ tab<-svyby(formula= ~
              #Conservation_Openness.non + Self_Enhancement_Self_Transcendence.non +
            yrbrn +happy +stflife +health +hincfel +aesfdrk +pplfair +sclmeet +stfgov +polintr + #iorgact +
              lrscale +gincdif +imwbcnt +freehms +rlgdgr + mrat,
-           by= ~ cntry + essround,
+           by= ~ cntry + essround + modal.year,
            design = s.w, 
            FUN = svymean,
            na.rm = TRUE,
@@ -206,7 +327,7 @@ tab<-svyby(formula= ~
 
 library("reshape2") 
 tb <-
-  melt(tab, id.vars = c("cntry", "essround")) %>%
+  melt(tab, id.vars = c("cntry", "essround", "modal.year")) %>%
   mutate(
     param.kind = ifelse(
       grepl("ci_l\\.", variable),
@@ -215,7 +336,7 @@ tb <-
     ),
     variable = gsub("ci_l\\.|ci_u\\.", "", variable)
   ) %>%
-  dcast(cntry + essround + variable ~ param.kind, value.var = "value") %>%
+  dcast(cntry + essround + variable + modal.year ~ param.kind, value.var = "value") %>%
   rename(value = "est")
   
 
@@ -230,12 +351,10 @@ tb <-
 # tb$lower<-tb$value-tb$se*1.96
 
 
-tb$essround<-2000+tb$essround*2
-tb$essround[tb$essround==2020]<-2021
-tb$essround[tb$essround==2022]<-2023
 tb$cntry<-as.character(tb$cntry)
 
-
+# this is a temporary fix, should rename the variable
+tb$essround = tb$modal.year
 
 ## Save data  ####
 #tab <- subset(tb, !variable %in% c("happy", "freehms", "stflife"))
@@ -243,14 +362,14 @@ tb$cntry<-as.character(tb$cntry)
 tb.extra <- subset(tb, variable %in% c(extra.vars, "yrbrn", "mrat"))
 tb.extra$variable<- factor(tb.extra$variable, 
                             levels=c(extra.vars, "yrbrn", "mrat"))
-saveRDS(tb.extra, "data/tb.extra.rds")
+saveRDS(tb.extra, "shinyapps.io/data/tb.extra.rds")
 
 tb.values <- subset(tb, !variable %in% c(extra.vars, "yrbrn", "mrat"))
 tb.values %<>% mutate(centered = !grepl("\\.non", variable),
                       variable = gsub("\\.non", "", variable))
 tb.values$variable<- factor(tb.values$variable, 
                             levels=c(values$ten.abbr, values$four.abbr, values$two.abbr))
-saveRDS(tb.values, "data/tb3.rds")
+saveRDS(tb.values, "shinyapps.io/data/tb3.rds")
 
 # ANALYSES #####
 
@@ -258,17 +377,19 @@ saveRDS(tb.values, "data/tb3.rds")
 
 
 tb.values %>% 
-  filter(essround==2021 & cntry=="NL" & centered & variable %in% values$ten.abbr) %>%
-  mutate(
-    variable = translation.tab[match(variable, translation.tab$element), "Russian"],
-    variable = factor(as.character(variable), levels = as.character(variable)[order(value)])) %>%
+  filter(essround==2023 & #cntry=="NL" & 
+           centered & variable %in% values$ten.abbr) %>%
+  #mutate(
+    #variable = translation.tab[match(variable, translation.tab$element), "Russian"],
+    #variable = factor(as.character(variable), levels = as.character(variable)[order(value)])) %>%
 ggplot(aes(value, variable))+
   geom_col(fill = "tomato", size = 3, alpha = .7)+
   geom_errorbarh(aes(xmin = lower, xmax = upper), height = .1, color = "blue")+
   #geom_point(color = "tomato", size = 3)+
-  geom_text(aes(label = f(value,2)), nudge_y = .2, size = 3)+
-  labs(x = "", y = "", title = "Нидерланды")+
-  theme_mr()
+  geom_text(aes(label = f(value,2)), #nudge_y = .2, 
+            size = 3)+
+  #labs(x = "", y = "", title = "Нидерланды")+
+  theme_mr()+facet_wrap(~cntry, scales = "free")
 
 
 # difference
